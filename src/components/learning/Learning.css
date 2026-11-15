@@ -1,0 +1,267 @@
+
+/* ===================================
+   PROSTA-SIM - LEARNING MODULE
+=================================== */
+
+.learning-container {
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  padding-bottom: 35px;
+}
+
+.learning-header {
+  margin-bottom: 30px;
+}
+
+.learning-eyebrow {
+  display: inline-block;
+  color: #42d6b0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+}
+
+.learning-header h2 {
+  color: #f1f5f9;
+  font-size: 26px;
+  margin: 0 0 10px;
+}
+
+.learning-header > p {
+  color: #91a2b3;
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 700px;
+}
+
+.learning-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 25px;
+  background: linear-gradient(110deg, #153b38, #111c28);
+  border: 1px solid #28534d;
+  border-radius: 13px;
+}
+
+.learning-summary-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #42d6b0;
+  background: #1b4942;
+  border-radius: 11px;
+}
+
+.learning-summary strong {
+  color: #e8f5f1;
+  font-size: 15px;
+}
+
+.learning-summary p {
+  color: #91a2b3;
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+
+/* TOPICS */
+
+.learning-topics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.learning-topic {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  min-width: 0;
+  padding: 21px;
+  text-align: left;
+  background: #111c28;
+  border: 1px solid #253746;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.learning-topic:hover {
+  border-color: #42d6b0;
+  background: #142630;
+  transform: translateY(-2px);
+}
+
+.learning-topic-number {
+  color: #526879;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.learning-topic-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #42d6b0;
+  background: #193b39;
+  border-radius: 10px;
+}
+
+.learning-topic-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.learning-topic-info h3 {
+  color: #f1f5f9;
+  font-size: 14px;
+  margin: 0 0 7px;
+}
+
+.learning-topic-info p {
+  color: #91a2b3;
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+
+.learning-topic-info span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #42d6b0;
+  font-size: 11px;
+}
+
+.learning-topic-arrow {
+  color: #718596;
+  flex-shrink: 0;
+}
+
+/* LESSON */
+
+.learning-lesson {
+  padding: 28px;
+  background: #111c28;
+  border: 1px solid #253746;
+  border-radius: 15px;
+}
+
+.learning-back {
+  padding: 9px 13px;
+  margin-bottom: 28px;
+  color: #42d6b0;
+  background: #193b39;
+  border: 1px solid #28534d;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.learning-lesson-heading {
+  padding-bottom: 25px;
+  border-bottom: 1px solid #253746;
+}
+
+.learning-lesson-heading span {
+  color: #42d6b0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.learning-lesson-heading h2 {
+  color: #f1f5f9;
+  font-size: 25px;
+  margin: 12px 0 8px;
+}
+
+.learning-lesson-heading p {
+  color: #91a2b3;
+  font-size: 13px;
+}
+
+.learning-lesson-content {
+  padding-top: 10px;
+}
+
+.learning-lesson-content section {
+  padding: 19px 0;
+  border-bottom: 1px solid #253746;
+}
+
+.learning-lesson-content h3 {
+  color: #42d6b0;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.learning-lesson-content p {
+  color: #b0bfcc;
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.learning-disclaimer {
+  margin-top: 23px;
+  padding: 15px;
+  color: #91a2b3;
+  background: #0b141e;
+  border-left: 3px solid #42d6b0;
+  border-radius: 5px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.learning-complete {
+  margin-top: 22px;
+  padding: 12px 18px;
+  color: #071713;
+  background: #42d6b0;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.learning-complete:hover {
+  background: #65e7c6;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+  .learning-topics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .learning-header h2 {
+    font-size: 22px;
+  }
+
+  .learning-topic {
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .learning-topic-number {
+    display: none;
+  }
+
+  .learning-lesson {
+    padding: 19px;
+  }
+}
