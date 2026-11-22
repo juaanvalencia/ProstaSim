@@ -53,7 +53,7 @@ La semilla se guarda con cada intento, de modo que con ella se puede reconstruir
 
 ## Cómo agregar un caso
 
-Basta con agregar una plantilla al final de `src/components/clinicalCases/data/casesData.js`. No hay que modificar ningún componente: el visor, el puntaje y las variantes se aplican solos.
+Basta con agregar una plantilla al final de `src/components/clinicalCases/data/casesData.js`. No hay que modificar ningún componente: el visor, el puntaje, las variantes y las pruebas automáticas se aplican solos.
 
 ```js
 {
@@ -109,6 +109,8 @@ Basta con agregar una plantilla al final de `src/components/clinicalCases/data/c
 ```
 
 En los textos se pueden usar tres marcadores que se reemplazan al generar el paciente: `{nombre}` (por ejemplo «Don Mario»), `{lado}` («izquierda» o «derecha») y `{lado_m}` («izquierdo» o «derecho»). Si el caso tiene nódulo, los textos que mencionan su ubicación deben usar `{lado}` o `{lado_m}`, para que coincidan con lo que muestra el modelo.
+
+Después de agregar el caso, corre `npm test`. Las pruebas revisan que no quede ningún marcador sin reemplazar, que cada pregunta tenga dos pistas y que el lado del nódulo coincida entre el texto y el 3D.
 
 ## Las zonas de la próstata
 

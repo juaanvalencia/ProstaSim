@@ -47,6 +47,7 @@ Queda disponible en `http://localhost:5173`. La primera vez tienes que crear una
 | `npm run build` | Genera la versión de producción en `dist/` |
 | `npm run preview` | Sirve en local la versión de producción, para revisarla antes de publicar |
 | `npm run lint` | Revisa el código con ESLint |
+| `npm test` | Corre las pruebas automáticas con Vitest |
 
 ## Si algo falla
 

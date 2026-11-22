@@ -15,7 +15,7 @@ Dentro del cliente, a su vez, el código se divide en cuatro capas. Cada una tie
 
 Ningún componente importa el cliente de Supabase. Si una pantalla necesita datos de la base, los pide a una función de `src/services/`. Hoy solo dos archivos tocan Supabase: `authService.js` y `clinicalCasesService.js`. Así, si mañana cambia la base de datos o se agrega un backend, solo hay que modificar esa carpeta.
 
-La lógica no conoce React ni Supabase. `scoring.js` y `caseVariants.js` son funciones puras: reciben datos y devuelven resultados.
+La lógica no conoce React ni Supabase. `scoring.js` y `caseVariants.js` son funciones puras: reciben datos y devuelven resultados. Por eso se pueden probar con tests automáticos sin abrir el navegador.
 
 El contenido, por su parte, no se programa. Las unidades de Aprendizaje, los órganos del modelo 3D y los casos clínicos están en archivos de datos. Para agregar un caso o una unidad nueva no hace falta tocar componentes.
 

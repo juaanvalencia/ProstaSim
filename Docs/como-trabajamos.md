@@ -21,6 +21,7 @@ Antes de abrir un pull request conviene correr:
 
 ```bash
 npm run lint
+npm test
 npm run build
 ```
 

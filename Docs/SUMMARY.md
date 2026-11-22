@@ -14,4 +14,5 @@
 ## Desarrollo
 
 * [Base de datos](base-de-datos.md)
+* [Pruebas](pruebas.md)
 * [Cómo trabajamos](como-trabajamos.md)

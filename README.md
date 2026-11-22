@@ -24,6 +24,7 @@ Plataforma web de aprendizaje y simulación educativa sobre la próstata y sus p
 - [Supabase](https://supabase.com) para autenticación y base de datos (PostgreSQL)
 - [React Three Fiber](https://r3f.docs.pmnd.rs) (Three.js) para los modelos 3D
 - [Lucide React](https://lucide.dev) para los íconos
+- [Vitest](https://vitest.dev) para las pruebas automáticas
 - ESLint para el análisis estático del código
 
 ## Requisitos
@@ -65,6 +66,7 @@ Si alguna de las dos falta, la aplicación muestra un error al iniciar.
 | `npm run build` | Genera la versión de producción en `dist/` |
 | `npm run preview` | Sirve localmente la versión de producción |
 | `npm run lint` | Ejecuta ESLint sobre el proyecto |
+| `npm test` | Ejecuta las pruebas automáticas con Vitest |
 
 ## Estructura del proyecto
 
