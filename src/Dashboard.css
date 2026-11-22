@@ -21,6 +21,11 @@
   flex-direction: column;
   background: #101b27;
   border-right: 1px solid #253746;
+  transition: margin-left 0.25s ease;
+}
+
+.sidebar-collapsed .dashboard-sidebar {
+  margin-left: -255px;
 }
 
 .dashboard-brand {
@@ -101,6 +106,42 @@
   color: #91a2b3;
   font-size: 13px;
   margin-top: 7px;
+}
+
+.dashboard-topbar-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dashboard-menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #42d6b0;
+  background: #193b39;
+  border: 1px solid #28534d;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.dashboard-menu-toggle:hover {
+  border-color: #42d6b0;
+}
+
+.dashboard-backdrop {
+  display: none;
+}
+
+.dashboard-loading {
+  padding: 60px 20px;
+  color: #91a2b3;
+  font-size: 14px;
+  text-align: center;
 }
 
 .dashboard-user {
@@ -272,29 +313,47 @@
     min-width: 210px;
   }
 
+  .sidebar-collapsed .dashboard-sidebar {
+    margin-left: -210px;
+  }
+
   .dashboard-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 700px) {
-  .dashboard-layout {
-    flex-direction: column;
-  }
-
   .dashboard-sidebar {
-    width: 100%;
-    min-width: 0;
-    min-height: auto;
-    padding: 18px;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 30;
+    width: 260px;
+    min-width: 260px;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
   }
 
-  .dashboard-nav {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+  .sidebar-collapsed .dashboard-sidebar {
+    margin-left: 0;
   }
 
-  .dashboard-sidebar-footer {
+  .dashboard-sidebar.sidebar-open {
+    transform: translateX(0);
+    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .dashboard-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    padding: 0;
+    background: rgba(4, 9, 16, 0.6);
+    border: none;
+  }
+
+  .dashboard-topbar .dashboard-user {
     display: none;
   }
 
