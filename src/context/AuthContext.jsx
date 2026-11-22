@@ -6,7 +6,14 @@ import {
   useState,
 } from "react";
 
-import { supabase } from "../services/supabase";
+import {
+  fetchProfile,
+  getSession,
+  onAuthChange,
+  signIn,
+  signOut,
+  signUp,
+} from "../services/authService";
 
 const AuthContext = createContext(null);
 
@@ -20,7 +27,7 @@ export function AuthProvider({ children }) {
       const {
         data: { session },
         error,
-      } = await supabase.auth.getSession();
+      } = await getSession();
 
       if (error) {
         console.error("Error al obtener sesión:", error.message);
@@ -34,7 +41,7 @@ export function AuthProvider({ children }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(
+    } = onAuthChange(
       (_event, session) => {
         setUser(session?.user ?? null);
       }
@@ -50,11 +57,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
+      const { data, error } = await fetchProfile(user.id);
 
       if (error) {
         console.error("Error al consultar perfil:", error.message);
@@ -69,26 +72,15 @@ export function AuthProvider({ children }) {
   }, [user]);
 
   const register = async (fullName, email, password) => {
-    return await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-      },
-    });
+    return await signUp(fullName, email, password);
   };
 
   const login = async (email, password) => {
-    return await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    return await signIn(email, password);
   };
 
   const logout = async () => {
-    return await supabase.auth.signOut();
+    return await signOut();
   };
 
   const value = {

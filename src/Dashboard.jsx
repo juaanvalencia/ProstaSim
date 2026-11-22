@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -19,8 +19,11 @@ import {
 
 import { useAuth } from "./context/AuthContext";
 import Learning from "./components/learning/Learning.jsx";
-import Anatomy3D from "./components/anatomy/Anatomy3D.jsx";
+import ClinicalCases from "./components/clinicalCases/ui/ClinicalCases.jsx";
 import "./Dashboard.css";
+
+// The 3D module (Three.js) is heavy: load it only when the section is opened.
+const Anatomy3D = lazy(() => import("./components/anatomy/Anatomy3D.jsx"));
 
 const modules = [
   {
@@ -49,6 +52,8 @@ const modules = [
   },
 ];
 
+const MOBILE_QUERY = "(max-width: 700px)";
+
 const navigation = [
   { name: "Inicio", icon: LayoutDashboard },
   { name: "Aprendizaje", icon: BookOpen },
@@ -65,6 +70,21 @@ export default function Dashboard() {
 
   const [activeSection, setActiveSection] = useState("Inicio");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem("prostasim:sidebar-collapsed") === "true"
+  );
+
+  const toggleSidebar = () => {
+    if (window.matchMedia(MOBILE_QUERY).matches) {
+      setSidebarOpen((open) => !open);
+      return;
+    }
+
+    setSidebarCollapsed((collapsed) => {
+      localStorage.setItem("prostasim:sidebar-collapsed", String(!collapsed));
+      return !collapsed;
+    });
+  };
 
   const fullName =
     profile?.full_name ||
@@ -97,7 +117,11 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-layout">
+    <div
+      className={`dashboard-layout ${
+        sidebarCollapsed ? "sidebar-collapsed" : ""
+      }`}
+    >
       <aside className={`dashboard-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
         <div className="dashboard-brand">
           <h2>PROSTA-SIM</h2>
@@ -140,13 +164,22 @@ export default function Dashboard() {
         </div>
       </aside>
 
+      {sidebarOpen && (
+        <button
+          className="dashboard-backdrop"
+          aria-label="Cerrar menú"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       <main className="dashboard-main">
         <header className="dashboard-topbar">
           <div className="dashboard-topbar-heading">
             <button
               className="dashboard-menu-toggle"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              aria-label="Abrir menú"
+              onClick={toggleSidebar}
+              aria-label="Mostrar u ocultar menú"
+              title="Mostrar u ocultar menú"
             >
               {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -268,15 +301,21 @@ export default function Dashboard() {
 
         {activeSection === "Aprendizaje" && <Learning />}
 
-        {activeSection === "Anatomía 3D" && <Anatomy3D />}
+        {activeSection === "Anatomía 3D" && (
+          <Suspense fallback={<div className="dashboard-loading">Cargando modelo 3D…</div>}>
+            <Anatomy3D />
+          </Suspense>
+        )}
+
+        {activeSection === "Casos clínicos" && <ClinicalCases />}
 
         {activeSection !== "Inicio" &&
           activeSection !== "Aprendizaje" &&
-          activeSection !== "Anatomía 3D" && (
+          activeSection !== "Anatomía 3D" &&
+          activeSection !== "Casos clínicos" && (
             <section className="dashboard-placeholder">
               <div className="dashboard-placeholder-icon">
                 {activeSection === "Anatomía 3D" && <Activity size={35} />}
-                {activeSection === "Casos clínicos" && <Stethoscope size={35} />}
                 {activeSection === "Tutor IA" && <Brain size={35} />}
                 {activeSection === "Evaluaciones" && <ClipboardList size={35} />}
                 {activeSection === "Mi progreso" && <TrendingUp size={35} />}
