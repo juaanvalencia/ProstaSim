@@ -19,6 +19,7 @@ import {
 
 import { useAuth } from "./context/AuthContext";
 import Learning from "./components/learning/Learning.jsx";
+import Anatomy3D from "./components/anatomy/Anatomy3D.jsx";
 import "./Dashboard.css";
 
 const modules = [
@@ -267,8 +268,11 @@ export default function Dashboard() {
 
         {activeSection === "Aprendizaje" && <Learning />}
 
+        {activeSection === "Anatomía 3D" && <Anatomy3D />}
+
         {activeSection !== "Inicio" &&
-          activeSection !== "Aprendizaje" && (
+          activeSection !== "Aprendizaje" &&
+          activeSection !== "Anatomía 3D" && (
             <section className="dashboard-placeholder">
               <div className="dashboard-placeholder-icon">
                 {activeSection === "Anatomía 3D" && <Activity size={35} />}
