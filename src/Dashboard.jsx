@@ -1,5 +1,5 @@
 
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -9,7 +9,8 @@ import {
   ClipboardList,
   GraduationCap,
   LayoutDashboard,
-  LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
   Stethoscope,
   TrendingUp,
   ChevronRight,
@@ -18,6 +19,8 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "./context/AuthContext";
+import Logo from "./components/brand/Logo.jsx";
+import ProfileMenu from "./components/profile/ProfileMenu.jsx";
 import Learning from "./components/learning/Learning.jsx";
 import ClinicalCases from "./components/clinicalCases/ui/ClinicalCases.jsx";
 import "./Dashboard.css";
@@ -52,17 +55,42 @@ const modules = [
   },
 ];
 
-const MOBILE_QUERY = "(max-width: 700px)";
+// Phones in portrait: the sidebar is a drawer opened from the top bar.
+const MOBILE_QUERY = "(max-width: 480px)";
+// Narrow windows (high zoom, tablets, phones in landscape): the sidebar stays
+// visible as the icon rail instead of disappearing.
+const RAIL_ONLY_QUERY = "(min-width: 481px) and (max-width: 700px)";
 
-const navigation = [
-  { name: "Inicio", icon: LayoutDashboard },
-  { name: "Aprendizaje", icon: BookOpen },
-  { name: "Anatomía 3D", icon: Activity },
-  { name: "Casos clínicos", icon: Stethoscope },
-  { name: "Tutor IA", icon: Brain },
-  { name: "Evaluaciones", icon: ClipboardList },
-  { name: "Mi progreso", icon: TrendingUp },
+// Sidebar groups. `soon` marks modules not built yet (they open a placeholder).
+const navigationGroups = [
+  {
+    title: "Aprender",
+    items: [
+      { name: "Inicio", icon: LayoutDashboard },
+      { name: "Aprendizaje", icon: BookOpen },
+      { name: "Anatomía 3D", icon: Activity },
+    ],
+  },
+  {
+    title: "Practicar",
+    items: [
+      { name: "Casos clínicos", icon: Stethoscope },
+      { name: "Evaluaciones", icon: ClipboardList, soon: true },
+    ],
+  },
+  {
+    title: "Acompañamiento",
+    items: [
+      { name: "Tutor IA", icon: Brain, soon: true },
+      { name: "Mi progreso", icon: TrendingUp, soon: true },
+    ],
+  },
 ];
+
+const isTypingTarget = (element) =>
+  element instanceof HTMLElement &&
+  (element.isContentEditable ||
+    element.closest("input, textarea, select, [contenteditable]") !== null);
 
 export default function Dashboard() {
   const { user, profile, logout } = useAuth();
@@ -74,7 +102,20 @@ export default function Dashboard() {
     () => localStorage.getItem("prostasim:sidebar-collapsed") === "true"
   );
 
-  const toggleSidebar = () => {
+  const [forcedRail, setForcedRail] = useState(
+    () => window.matchMedia(RAIL_ONLY_QUERY).matches
+  );
+
+  useEffect(() => {
+    const query = window.matchMedia(RAIL_ONLY_QUERY);
+    const handleChange = (event) => setForcedRail(event.matches);
+    query.addEventListener("change", handleChange);
+    return () => query.removeEventListener("change", handleChange);
+  }, []);
+
+  const toggleSidebar = useCallback(() => {
+    if (window.matchMedia(RAIL_ONLY_QUERY).matches) return;
+
     if (window.matchMedia(MOBILE_QUERY).matches) {
       setSidebarOpen((open) => !open);
       return;
@@ -84,7 +125,28 @@ export default function Dashboard() {
       localStorage.setItem("prostasim:sidebar-collapsed", String(!collapsed));
       return !collapsed;
     });
-  };
+  }, []);
+
+  // Ctrl+B (Cmd+B on macOS) toggles the sidebar, except while typing.
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (
+        !(event.ctrlKey || event.metaKey) ||
+        event.altKey ||
+        event.shiftKey ||
+        event.key.toLowerCase() !== "b" ||
+        isTypingTarget(event.target)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      toggleSidebar();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [toggleSidebar]);
 
   const fullName =
     profile?.full_name ||
@@ -111,6 +173,14 @@ export default function Dashboard() {
     navigate("/login");
   };
 
+  // In the icon rail, labels are fixed-position tooltips so the scrollable nav does not clip them.
+  const placeRailTooltip = (event) => {
+    const button = event.target.closest?.("button");
+    if (!button) return;
+    const rect = button.getBoundingClientRect();
+    button.style.setProperty("--tip-y", `${rect.top + rect.height / 2}px`);
+  };
+
   const selectSection = (section) => {
     setActiveSection(section);
     setSidebarOpen(false);
@@ -119,47 +189,85 @@ export default function Dashboard() {
   return (
     <div
       className={`dashboard-layout ${
-        sidebarCollapsed ? "sidebar-collapsed" : ""
+        sidebarCollapsed || forcedRail ? "sidebar-collapsed" : ""} ${forcedRail ? "sidebar-forced-rail" : ""
       }`}
     >
-      <aside className={`dashboard-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
+      <aside
+        onMouseOver={placeRailTooltip}
+        onFocus={placeRailTooltip}
+        className={`dashboard-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
         <div className="dashboard-brand">
-          <h2>PROSTA-SIM</h2>
+          <h2>
+            <span className="dashboard-brand-full">
+              <Logo variant="horizontal" size={36} />
+            </span>
+            <span className="dashboard-brand-icon">
+              <Logo variant="icon" size={40} />
+            </span>
+          </h2>
           <p>Plataforma de simulación educativa</p>
         </div>
 
-        <div className="dashboard-nav-title">MENÚ PRINCIPAL</div>
+        <nav className="dashboard-nav" aria-label="Menú principal">
+          {navigationGroups.map((group) => (
+            <div
+              key={group.title}
+              className="dashboard-nav-group"
+              role="group"
+              aria-label={group.title}
+            >
+              <div className="dashboard-nav-title" aria-hidden="true">
+                {group.title}
+              </div>
 
-        <nav className="dashboard-nav">
-          {navigation.map((item) => {
-            const Icon = item.icon;
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const classes = [
+                  activeSection === item.name ? "active" : "",
+                  item.soon ? "is-soon" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
 
-            return (
-              <button
-                key={item.name}
-                className={activeSection === item.name ? "active" : ""}
-                onClick={() => selectSection(item.name)}
-              >
-                <Icon size={19} />
-                {item.name}
-              </button>
-            );
-          })}
+                return (
+                  <button
+                    key={item.name}
+                    className={classes}
+                    onClick={() => selectSection(item.name)}
+                    aria-label={item.soon ? `${item.name} (pronto)` : item.name}
+                    aria-current={activeSection === item.name ? "page" : undefined}
+                  >
+                    <Icon size={19} aria-hidden="true" />
+                    <span className="dashboard-nav-label">{item.name}</span>
+                    {item.soon && (
+                      <span className="dashboard-soon" aria-hidden="true">
+                        Pronto
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         <div className="dashboard-sidebar-footer">
-          <div className="dashboard-sidebar-user">
-            <div className="dashboard-avatar">{initials}</div>
-
-            <div className="dashboard-user-info">
-              <strong>{fullName}</strong>
-              <span>Estudiante</span>
-            </div>
-          </div>
-
-          <button className="dashboard-logout" onClick={handleLogout}>
-            <LogOut size={17} />
-            Cerrar sesión
+          <button
+            className="dashboard-collapse"
+            onClick={toggleSidebar}
+            aria-expanded={!sidebarCollapsed}
+            aria-keyshortcuts="Control+B Meta+B"
+            aria-label={sidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
+          >
+            {sidebarCollapsed ? (
+              <PanelLeftOpen size={19} aria-hidden="true" />
+            ) : (
+              <PanelLeftClose size={19} aria-hidden="true" />
+            )}
+            <span className="dashboard-nav-label">
+              {sidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
+            </span>
+            <kbd className="dashboard-kbd" aria-hidden="true">Ctrl+B</kbd>
           </button>
         </div>
       </aside>
@@ -190,13 +298,12 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="dashboard-user">
-            <div className="dashboard-user-info">
-              <strong>{fullName}</strong>
-              <span>Estudiante</span>
-            </div>
-
-            <div className="dashboard-avatar">{initials}</div>
+          <div className="dashboard-topbar-actions">
+            <ProfileMenu
+              fullName={fullName}
+              initials={initials}
+              onLogout={handleLogout}
+            />
           </div>
         </header>
 
@@ -315,7 +422,6 @@ export default function Dashboard() {
           activeSection !== "Casos clínicos" && (
             <section className="dashboard-placeholder">
               <div className="dashboard-placeholder-icon">
-                {activeSection === "Anatomía 3D" && <Activity size={35} />}
                 {activeSection === "Tutor IA" && <Brain size={35} />}
                 {activeSection === "Evaluaciones" && <ClipboardList size={35} />}
                 {activeSection === "Mi progreso" && <TrendingUp size={35} />}

@@ -1,0 +1,26 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--brand-petroleum);
+}
+
+.logo-wordmark {
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.logo-hyphen {
+  color: var(--brand-coral);
+}

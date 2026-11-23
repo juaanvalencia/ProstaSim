@@ -1,0 +1,143 @@
+/* =====================================
+   PROSTA-SIM - DESIGN TOKENS
+   Light is the default; [data-theme] on <html> is set by ThemeProvider
+   (and by the inline script in index.html before React mounts).
+===================================== */
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces and text */
+  --bg: #f5f9f9;
+  --surf: #ffffff;
+  --alt: #e8f2f1;
+  --ink: #0b2f3a;
+  --muted: #5b7179;
+  --muted2: #98acaf;
+  --line: #dde8e8;
+  --line2: #c8d8d8;
+  --ring: #a9c0c1;
+
+  /* Accent (petroleum / aqua) */
+  --acc: #0b3c4a;
+  --on-acc: #ffffff;
+  --soft: #ddedec;
+  /* Darkened from the reference #137F86 so small text on --bg keeps 4.5:1. */
+  --act: #127a81;
+  --view: #eaf3f3;
+
+  /* Warning */
+  --warn: #b4541a;
+  --warn-s: #fbede6;
+
+  /* Hero band */
+  --hero-bg: #0b3c4a;
+  --hero-ink: #ffffff;
+  --hero-muted: #b5cfd3;
+  --hero-act: #b1d5d3;
+  --hero-line: rgba(255, 255, 255, 0.3);
+
+  /* Primary call to action (coral). Darkened from the reference #E0663D
+     so white text keeps 4.5:1 contrast. */
+  --cta: #c2522c;
+  --cta-hover: #ab4623;
+  --cta-ink: #ffffff;
+
+  /* Module colors */
+  --m1: #13a3a0;
+  --m2: #e0663d;
+  --m3: #e2a11b;
+  --m4: #5867d3;
+
+  /* Glass, 3D stage, misc */
+  --glass: rgba(255, 255, 255, 0.74);
+  --glass-line: rgba(255, 255, 255, 0.9);
+  --stage-a: #fbfdfd;
+  --stage-b: #e2eef0;
+  --lead: #0b3c4a;
+  --scrim: rgba(11, 60, 74, 0.35);
+  --hud: #0e9e9e;
+  --hud-glow: rgba(14, 158, 158, 0.45);
+  --hud-text: #3f7f86;
+  --logo-frame: #0b3c4a;
+  --shadow: 0 1px 1px rgba(11, 47, 58, 0.04), 0 12px 32px rgba(11, 47, 58, 0.1);
+
+  /* Brand (fixed in both themes) */
+  --brand-petroleum: #0b3c4a;
+  --brand-aqua: #b1d5d3;
+  --brand-coral: #d9633b;
+
+  /* Typography */
+  --font-heading: "Bricolage Grotesque", "DM Sans", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Clinical readouts (PSA, IPSS, volumes), like a medical monitor. */
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* Information accent and the subtle edge of active surfaces. */
+  --info: #1f6f9e;
+  --edge: var(--line);
+  --grid-dot: rgba(11, 60, 74, 0.07);
+
+  /* Shape */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+}
+
+[data-theme="dark"] {
+  /* Based on the original PROSTA-SIM dark palette (same night blue and mint the
+     team knows), with three surface levels and simulator-style accents. */
+  color-scheme: dark;
+
+  --bg: #070d18;
+  --surf: #0d1726;
+  --alt: #13233a;
+  --ink: #eef4f8;
+  --muted: #8ba2b5;
+  --muted2: #6c8597;
+  --line: #1e3040;
+  --line2: #2a4256;
+  --ring: #2a4256;
+
+  --acc: #42d6b0;
+  --on-acc: #071713;
+  --soft: #123331;
+  --act: #42d6b0;
+  --view: #0a1322;
+
+  --warn: #f2b84b;
+  --warn-s: rgba(242, 184, 75, 0.12);
+
+  --hero-bg: #153b38;
+  --hero-ink: #f1f5f9;
+  --hero-muted: #b0bfcc;
+  --hero-act: #42d6b0;
+  --hero-line: rgba(66, 214, 176, 0.3);
+
+  --cta: #42d6b0;
+  --cta-hover: #65e7c6;
+  --cta-ink: #071713;
+
+  --m1: #42d6b0;
+  --m2: #ee8762;
+  --m3: #f2b84b;
+  --m4: #8f9bf0;
+
+  --glass: rgba(13, 23, 38, 0.84);
+  --glass-line: rgba(66, 214, 176, 0.18);
+  --stage-a: #102236;
+  --stage-b: #070d18;
+  --lead: #42d6b0;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --hud: #42d6b0;
+  --hud-glow: rgba(66, 214, 176, 0.45);
+  --hud-text: #7fa3b8;
+
+  --info: #5cc8f2;
+  --edge: rgba(66, 214, 176, 0.18);
+  --grid-dot: rgba(255, 255, 255, 0.045);
+  --logo-frame: #f1f5f9;
+  --shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 12px 32px rgba(0, 0, 0, 0.4);
+}
