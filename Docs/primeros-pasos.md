@@ -48,6 +48,7 @@ Queda disponible en `http://localhost:5173`. La primera vez tienes que crear una
 | `npm run preview` | Sirve en local la versión de producción, para revisarla antes de publicar |
 | `npm run lint` | Revisa el código con ESLint |
 | `npm test` | Corre las pruebas automáticas con Vitest |
+| `npm run test:coverage` | Corre las pruebas y genera el reporte de cobertura en `coverage/` |
 
 ## Si algo falla
 

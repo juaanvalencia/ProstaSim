@@ -67,6 +67,7 @@ Si alguna de las dos falta, la aplicación muestra un error al iniciar.
 | `npm run preview` | Sirve localmente la versión de producción |
 | `npm run lint` | Ejecuta ESLint sobre el proyecto |
 | `npm test` | Ejecuta las pruebas automáticas con Vitest |
+| `npm run test:coverage` | Corre las pruebas y genera el reporte de cobertura en `coverage/` |
 
 ## Estructura del proyecto
 

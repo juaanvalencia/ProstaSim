@@ -4,7 +4,7 @@ El proyecto combina pruebas automáticas, que se corren con un comando, y prueba
 
 ## Pruebas automáticas
 
-Usamos [Vitest](https://vitest.dev), que se integra con Vite sin configuración extra. Para correrlas:
+Usamos [Vitest](https://vitest.dev), que se integra con Vite y reutiliza su configuración, junto con [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) y jsdom para probar las pantallas como las usaría una persona. Para correrlas:
 
 ```bash
 npm test
@@ -16,29 +16,38 @@ Si además quieres ver el nombre de cada prueba, usa:
 npx vitest run --reporter=verbose
 ```
 
-Cada línea con `✓` es una prueba que pasó; en cambio, una `×` indica una que falló, y debajo aparece qué se esperaba y qué salió. Al final se muestra el resumen, por ejemplo `Tests 63 passed (63)`.
+Cada línea con `✓` es una prueba que pasó; en cambio, una `×` indica una que falló, y debajo aparece qué se esperaba y qué salió. Al final se muestra el resumen, por ejemplo `Tests 175 passed (175)`.
+
+Para ver qué parte del código recorren las pruebas, usa:
+
+```bash
+npm run test:coverage
+```
+
+El resumen aparece en la terminal y el reporte detallado queda en `coverage/index.html`, donde se ven las líneas que ninguna prueba ejecuta.
+
+### Dónde están
+
+Las pruebas viven en la carpeta `tests/`, separadas del código de la aplicación. Dentro, la estructura repite la de `src/`, así que la prueba de `src/pages/Login.jsx` está en `tests/pages/Login.test.jsx`. En `tests/helpers/` están los simuladores compartidos.
+
+Supabase y el lienzo 3D se reemplazan por simuladores. Así, las pruebas no tocan la base de datos real ni necesitan tarjeta gráfica ni conexión a internet.
 
 ### Qué se prueba
 
-Las pruebas están junto al código que prueban, en `src/components/clinicalCases/logic/`.
+| Carpeta | Qué comprueba |
+|---|---|
+| `tests/pages`, `tests/context`, `tests/App.test.jsx` | Registro, inicio y cierre de sesión, la sesión guardada, el tema y qué pantalla ve cada usuario según tenga sesión o no |
+| `tests/services` | El guardado y la consulta de intentos en Supabase, y el aviso cuando falta la configuración de conexión |
+| `tests/components/learning` | Las seis unidades de aprendizaje y la navegación entre ellas |
+| `tests/components/anatomy` | Los datos de los órganos contra el modelo 3D, las vistas de cámara, la selección, la visibilidad y la opacidad |
+| `tests/components/clinicalCases` | La generación de pacientes, la calificación, el examen físico y el recorrido completo de un caso, desde el paciente hasta la retroalimentación |
+| `tests/components/landing`, `profile`, `theme`, `tests/Dashboard.test.jsx` | La página de bienvenida, el menú de perfil, el selector de tema y el panel principal con su menú colapsable |
 
-`scoring.test.js` comprueba el cálculo del puntaje. Por ejemplo, verifica que una respuesta correcta con una pista valga 75 %, que una incorrecta valga 0 aunque se hayan pedido pistas y que las pruebas innecesarias resten.
-
-`caseVariants.test.js` comprueba la generación de pacientes. Para eso genera 200 pacientes por cada plantilla y revisa que:
-
-* la misma semilla produzca siempre el mismo paciente;
-* la edad, el nombre y la ocupación queden dentro de lo que define la plantilla;
-* los valores clínicos, las pruebas necesarias y las respuestas correctas no cambien nunca;
-* no quede ningún marcador como `{nombre}` sin reemplazar ni aparezca el nombre de otro paciente;
-* el lado del nódulo coincida entre el texto y la posición en el modelo 3D;
-* cada pregunta tenga dos pistas y la explicación modelo esté dirigida al paciente generado;
-* un intento perfecto dé 100 %, sin importar en qué orden salgan las opciones.
-
-Estas pruebas recorren todas las plantillas automáticamente. Por eso, cuando se agrega un caso nuevo, queda cubierto sin escribir pruebas adicionales: con los seis casos actuales son 63.
+Las pruebas de casos clínicos recorren todas las plantillas automáticamente. Por eso, cuando se agrega un caso nuevo, queda cubierto sin escribir pruebas adicionales.
 
 ### ¿Cómo sabemos que las pruebas sirven?
 
-Una prueba que nunca falla no demuestra nada. Por eso, además de verlas pasar, dañamos el código a propósito y revisamos que fallen. Por ejemplo, al desactivar el reemplazo de marcadores fallaron cinco pruebas; luego, al restaurar el código, volvieron a pasar las 63.
+Una prueba que nunca falla no demuestra nada. Por eso, además de verlas pasar, dañamos el código a propósito y revisamos que fallen. Por ejemplo, al cambiar el mínimo de la contraseña de 8 a 7 caracteres, al quitar el cierre del menú de perfil con Escape o al romper el botón de ocultar órganos, falló la prueba correspondiente; al restaurar el código, volvieron a pasar todas.
 
 ## Pruebas manuales de punta a punta
 

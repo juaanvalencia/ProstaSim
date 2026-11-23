@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { buildCaseVariant, createRandom } from "./caseVariants";
-import { caseTemplates } from "../data/casesData";
-import { gradeCase } from "./scoring";
+import { buildCaseVariant, createRandom, createSeed } from "../../../../src/components/clinicalCases/logic/caseVariants";
+import { caseTemplates } from "../../../../src/components/clinicalCases/data/casesData";
+import { gradeCase } from "../../../../src/components/clinicalCases/logic/scoring";
 
 const SEEDS = Array.from({ length: 200 }, (_, index) => index * 7919 + 1);
 
@@ -21,6 +21,28 @@ describe("createRandom", () => {
     const b = createRandom(42);
 
     expect([a(), a(), a()]).toEqual([b(), b(), b()]);
+  });
+
+  it("only returns numbers between 0 and 1", () => {
+    const random = createRandom(7);
+
+    Array.from({ length: 1000 }, random).forEach((value) => {
+      expect(value).toBeGreaterThanOrEqual(0);
+      expect(value).toBeLessThan(1);
+    });
+  });
+});
+
+describe("createSeed", () => {
+  it("returns a 32-bit whole number that changes between attempts", () => {
+    const seeds = Array.from({ length: 50 }, createSeed);
+
+    seeds.forEach((seed) => {
+      expect(Number.isInteger(seed)).toBe(true);
+      expect(seed).toBeGreaterThanOrEqual(0);
+      expect(seed).toBeLessThan(2 ** 32);
+    });
+    expect(new Set(seeds).size).toBeGreaterThan(1);
   });
 });
 
@@ -111,6 +133,50 @@ describe.each(caseTemplates)("buildCaseVariant($id)", (template) => {
 
       expect(gradeCase(variant, answers, indicated).score).toBe(100);
     });
+  });
+});
+
+describe("palpation", () => {
+  const palpationTemplates = caseTemplates.filter((template) => template.palpation);
+
+  it("is defined only for the three physical exam cases", () => {
+    expect(palpationTemplates.map((template) => template.id).sort()).toEqual([
+      "alberto-cancer",
+      "jorge-cancer",
+      "prostatitis-aguda",
+    ]);
+  });
+
+  it.each(palpationTemplates)("has at least 3 valid findings ($id)", (template) => {
+    SEEDS.slice(0, 20).forEach((seed) => {
+      const { palpation } = buildCaseVariant(template, seed);
+
+      expect(palpation.instruction.length).toBeGreaterThan(10);
+      expect(palpation.findings.length).toBeGreaterThanOrEqual(3);
+      palpation.findings.forEach((finding) => {
+        expect(finding.options).toContain(finding.answer);
+        expect(finding.why.length).toBeGreaterThan(10);
+      });
+    });
+  });
+
+  it("follows the nodule side in alberto-cancer", () => {
+    const template = caseTemplates.find((item) => item.id === "alberto-cancer");
+    const sides = new Set();
+
+    SEEDS.forEach((seed) => {
+      const { model, palpation } = buildCaseVariant(template, seed);
+      const location = palpation.findings.find(
+        (finding) => finding.label === "Ubicación del hallazgo"
+      );
+
+      sides.add(model.nodule.side);
+      expect(location.answer).toBe(
+        model.nodule.side === "left" ? "Lado izquierdo" : "Lado derecho"
+      );
+    });
+
+    expect(sides).toEqual(new Set(["left", "right"]));
   });
 });
 
