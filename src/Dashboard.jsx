@@ -2,6 +2,8 @@
 import { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Evaluation from "./components/evaluations/Evaluation";
+
 import {
   Activity,
   BookOpen,
@@ -406,7 +408,8 @@ export default function Dashboard() {
           </>
         )}
 
-        {activeSection === "Aprendizaje" && <Learning />}
+        
+        {activeSection === "Evaluaciones" && <Evaluation />}  
 
         {activeSection === "Anatomía 3D" && (
           <Suspense fallback={<div className="dashboard-loading">Cargando modelo 3D…</div>}>
@@ -418,6 +421,7 @@ export default function Dashboard() {
 
         {activeSection !== "Inicio" &&
           activeSection !== "Aprendizaje" &&
+          activeSection !== "Evaluaciones" &&
           activeSection !== "Anatomía 3D" &&
           activeSection !== "Casos clínicos" && (
             <section className="dashboard-placeholder">
