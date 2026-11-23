@@ -101,57 +101,58 @@ export default function ClinicalCases() {
 
   return (
     <section className="cases-container">
-      <div className="cases-header">
-        <span className="cases-eyebrow">SIMULACIÓN CLÍNICA</span>
-        <h2>Casos clínicos</h2>
-        <p>
-          Analiza pacientes ficticios, interpreta sus pruebas y toma decisiones.
-          Al final recibirás retroalimentación basada en guías clínicas
-          publicadas.
-        </p>
-      </div>
-
-      <div className="cases-summary">
-        <div className="cases-summary-icon">
-          <Stethoscope size={24} />
-        </div>
+      <header className="cases-header">
         <div>
-          <strong>
-            {completedCount} de {clinicalCases.length} casos resueltos
-          </strong>
+          <span className="cases-eyebrow">Simulación clínica</span>
+          <h2>Casos clínicos</h2>
           <p>
-            Examina al paciente, solicita las pruebas necesarias, observa los
-            hallazgos en el modelo 3D y toma decisiones.
+            Atiende pacientes ficticios: examina, pide las pruebas necesarias,
+            observa los hallazgos en 3D y decide.
           </p>
         </div>
-      </div>
+
+        <div className="cases-summary">
+          <Stethoscope size={18} />
+          <span>
+            <strong>
+              {completedCount} de {clinicalCases.length}
+            </strong>{" "}
+            casos resueltos
+          </span>
+        </div>
+      </header>
 
       <div className="cases-cards">
-        {clinicalCases.map((clinicalCase) => {
+        {clinicalCases.map((clinicalCase, index) => {
           const summary = attemptSummary[clinicalCase.id];
+          const progress = summary ? summary.bestScore : 0;
 
           return (
             <button
               key={clinicalCase.id}
               className="cases-card"
+              style={{ "--case-color": `var(--m${(index % 4) + 1})` }}
               onClick={() => setSelectedCaseId(clinicalCase.id)}
             >
               <div className="cases-card-top">
-                <div className="cases-avatar">
-                  {clinicalCase.patient.initials}
-                </div>
-                <div>
-                  <h3>{clinicalCase.patient.name}</h3>
-                  <p>
-                    {clinicalCase.patient.age} años · {clinicalCase.topic}
-                  </p>
-                </div>
+                <span className="cases-card-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="cases-chip">
+                  {summary ? "Completado" : "Sin iniciar"}
+                </span>
               </div>
 
-              <p className="cases-card-reason">“{clinicalCase.reason}”</p>
+              <div className="cases-card-body">
+                <span className="cases-card-topic">{clinicalCase.topic}</span>
+                <h3>
+                  {clinicalCase.patient.name}, {clinicalCase.patient.age} años
+                </h3>
+                <p className="cases-card-reason">“{clinicalCase.reason}”</p>
+              </div>
 
               <div className="cases-card-meta">
-                <span className="cases-chip">{clinicalCase.difficulty}</span>
+                <span>{clinicalCase.difficulty}</span>
                 <span>
                   <Clock size={13} />
                   {clinicalCase.duration}
@@ -165,10 +166,15 @@ export default function ClinicalCases() {
                 )}
               </div>
 
-              <span className="cases-card-cta">
-                {summary ? "Repetir caso" : "Iniciar caso"}
-                <ChevronRight size={15} />
-              </span>
+              <div className="cases-card-footer">
+                <span className="cases-card-progress" aria-hidden="true">
+                  <span style={{ width: `${progress}%` }} />
+                </span>
+                <span className="cases-card-cta">
+                  {summary ? "Repetir caso" : "Iniciar caso"}
+                  <ChevronRight size={15} />
+                </span>
+              </div>
             </button>
           );
         })}

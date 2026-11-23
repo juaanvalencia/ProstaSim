@@ -233,6 +233,40 @@ export const caseTemplates = [
       finding:
         "Nódulo en la zona periférica posterior {lado}. Por estar en la cara posterior, cerca del recto, se puede palpar en el tacto rectal.",
     },
+    palpation: {
+      instruction:
+        "Toca el punto marcado en la cara posterior del modelo, la que se alcanza en el tacto rectal, y describe lo que palpas.",
+      findings: [
+        {
+          id: "size",
+          label: "Tamaño",
+          options: ["Normal", "Aumentado"],
+          answer: "Normal",
+          why: "La glándula no está agrandada: el problema es un nódulo, no el volumen.",
+        },
+        {
+          id: "consistency",
+          label: "Consistencia",
+          options: ["Elástica", "Dura"],
+          answer: "Dura",
+          why: "El nódulo es duro, pétreo; el tejido sano se siente elástico.",
+        },
+        {
+          id: "surface",
+          label: "Superficie",
+          options: ["Lisa", "Irregular"],
+          answer: "Irregular",
+          why: "El nódulo duro e irregular está en la zona periférica, justo la que alcanza el dedo.",
+        },
+        {
+          id: "location",
+          label: "Ubicación del hallazgo",
+          options: ["Lado izquierdo", "Lado derecho"],
+          answer: "Lado {lado_m}",
+          why: "El nódulo está en el lóbulo {lado_m}, en la cara posterior que da al recto.",
+        },
+      ],
+    },
     tests: [
       {
         id: "dre",
@@ -387,6 +421,40 @@ export const caseTemplates = [
       nodule: { scale: 1.1 },
       finding:
         "Lesión pequeña en la zona periférica posterior {lado}. Por su tamaño no se palpa en el tacto rectal: solo la muestra la resonancia.",
+    },
+    palpation: {
+      instruction:
+        "Toca el punto marcado en la cara posterior del modelo, la que se alcanza en el tacto rectal, y describe lo que palpas.",
+      findings: [
+        {
+          id: "size",
+          label: "Tamaño",
+          options: ["Normal", "Aumentado"],
+          answer: "Normal",
+          why: "La glándula tiene un tamaño normal para su edad.",
+        },
+        {
+          id: "consistency",
+          label: "Consistencia",
+          options: ["Elástica", "Dura"],
+          answer: "Elástica",
+          why: "Se siente elástica, como el tejido prostático sano.",
+        },
+        {
+          id: "surface",
+          label: "Superficie",
+          options: ["Lisa", "Irregular"],
+          answer: "Lisa",
+          why: "La superficie posterior es lisa, sin irregularidades.",
+        },
+        {
+          id: "nodule",
+          label: "¿Palpaste algún nódulo?",
+          options: ["Sí", "No"],
+          answer: "No",
+          why: "La lesión mide 1,2 cm y no se alcanza con el dedo. Un tacto normal no descarta el cáncer.",
+        },
+      ],
     },
     tests: [
       {
@@ -722,6 +790,40 @@ export const caseTemplates = [
       nodule: null,
       finding:
         "Próstata inflamada de forma difusa: aumentada, caliente y muy dolorosa. No hay un nódulo: toda la glándula está comprometida por la infección.",
+    },
+    palpation: {
+      instruction:
+        "Toca el punto marcado en la cara posterior del modelo, la que se alcanza en el tacto rectal, y describe lo que palpas.",
+      findings: [
+        {
+          id: "size",
+          label: "Tamaño",
+          options: ["Normal", "Aumentado"],
+          answer: "Aumentado",
+          why: "La inflamación agranda toda la glándula de forma difusa.",
+        },
+        {
+          id: "pain",
+          label: "Dolor al tacto",
+          options: ["No duele", "Muy doloroso"],
+          answer: "Muy doloroso",
+          why: "La próstata inflamada es muy sensible; incluso un tacto suave causa dolor intenso.",
+        },
+        {
+          id: "temperature",
+          label: "Temperatura",
+          options: ["Normal", "Caliente"],
+          answer: "Caliente",
+          why: "La infección aguda aumenta el flujo de sangre y la glándula se siente caliente.",
+        },
+        {
+          id: "maneuver",
+          label: "Maniobra correcta",
+          options: ["Palpación suave", "Masaje prostático"],
+          answer: "Palpación suave",
+          why: "El masaje prostático está contraindicado: puede diseminar la infección a la sangre.",
+        },
+      ],
     },
     tests: [
       {

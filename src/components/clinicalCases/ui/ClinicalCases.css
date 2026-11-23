@@ -1,168 +1,186 @@
 /* ===================================
    PROSTA-SIM - CLINICAL CASES MODULE
+   "Simulador espacial": the 3D stage leads, glass controls float over it.
+   Uses only the global tokens from src/styles/theme.css (light and dark).
 =================================== */
 
 .cases-container {
-  --cases-card: #111c28;
-  --cases-card-hover: #142630;
-  --cases-deep: #0b141e;
-  --cases-border: #253746;
-  --cases-accent: #42d6b0;
-  --cases-accent-soft: #193b39;
-  --cases-accent-border: #28534d;
-  --cases-text: #f1f5f9;
-  --cases-body: #b0bfcc;
-  --cases-muted: #91a2b3;
-  --cases-warning: #f2b84b;
-  --cases-danger: #f2736b;
-
+  /* Layout reacts to the space the module really has (the sidebar may be open). */
+  container-type: inline-size;
+  container-name: cases;
   width: 100%;
   max-width: 1150px;
   margin: 0 auto;
   padding-bottom: 35px;
+  color: var(--ink);
+  font-family: var(--font-body);
 }
 
 .cases-container:has(.cases-session) {
   max-width: 1450px;
 }
 
+.cases-container h2,
+.cases-container h3 {
+  font-family: var(--font-heading);
+  color: var(--ink);
+}
+
+/* Glass surface shared by the floating controls over the stage. */
+.case-viewer-toolbar,
+.case-viewer-zones,
+.case-viewer-finding,
+.case-viewer-label {
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+}
+
+/* ===== CASE LIST ===== */
+
 .cases-header {
-  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .cases-eyebrow {
-  display: inline-block;
-  margin-bottom: 12px;
-  color: var(--cases-accent);
-  font-size: 11px;
+  display: block;
+  margin-bottom: 6px;
+  color: var(--act);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
 }
 
 .cases-header h2 {
-  margin: 0 0 10px;
-  color: var(--cases-text);
-  font-size: 26px;
+  margin: 0 0 6px;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 800;
+  line-height: 1.1;
 }
 
-.cases-header > p {
-  max-width: 700px;
-  color: var(--cases-muted);
-  font-size: 14px;
-  line-height: 1.7;
+.cases-header p {
+  max-width: 560px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .cases-summary {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 25px;
-  padding: 20px;
-  background: linear-gradient(110deg, #153b38, #111c28);
-  border: 1px solid var(--cases-accent-border);
-  border-radius: 13px;
-}
-
-.cases-summary-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  color: var(--cases-accent);
-  background: #1b4942;
-  border-radius: 11px;
-}
-
-.cases-summary strong {
-  color: #e8f5f1;
-  font-size: 15px;
-}
-
-.cases-summary p {
-  margin: 6px 0 0;
-  color: var(--cases-muted);
+  gap: 8px;
+  padding: 8px 14px;
+  color: var(--acc);
+  background: var(--soft);
+  border-radius: var(--radius-pill);
   font-size: 13px;
 }
 
-/* CASE CARDS */
-
 .cases-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   gap: 16px;
 }
 
 .cases-card {
+  --case-color: var(--m1);
+
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 100%;
+  gap: 18px;
   min-width: 0;
-  padding: 21px;
+  padding: 22px;
+  overflow: hidden;
+  color: var(--ink);
   text-align: left;
   font: inherit;
-  background: var(--cases-card);
-  border: 1px solid var(--cases-border);
-  border-radius: 13px;
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .cases-card:hover {
-  background: var(--cases-card-hover);
-  border-color: var(--cases-accent);
   transform: translateY(-2px);
+  border-color: var(--case-color);
+}
+
+.cases-card:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .cases-card-top {
   display: flex;
-  align-items: center;
-  gap: 13px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.cases-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  color: var(--cases-accent);
-  background: var(--cases-accent-soft);
-  border-radius: 50%;
-  font-size: 13px;
+.cases-card-number {
+  color: var(--case-color);
+  font-family: var(--font-heading);
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cases-chip {
+  padding: 5px 10px;
+  color: var(--acc);
+  background: var(--soft);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
   font-weight: 700;
 }
 
-.cases-card h3 {
-  margin: 0 0 5px;
-  color: var(--cases-text);
-  font-size: 15px;
+.cases-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.cases-card-top p {
-  margin: 0;
-  color: var(--cases-muted);
+.cases-card-topic {
+  color: var(--muted);
   font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.cases-card h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .cases-card-reason {
   margin: 0;
-  color: var(--cases-body);
-  font-size: 13px;
+  color: var(--muted);
+  font-size: 14px;
   font-style: italic;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 .cases-card-meta {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  color: var(--cases-muted);
-  font-size: 11px;
+  gap: 8px 14px;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .cases-card-meta span {
@@ -171,28 +189,44 @@
   gap: 5px;
 }
 
-.cases-chip {
-  padding: 4px 9px;
-  color: var(--cases-accent);
-  background: var(--cases-accent-soft);
-  border-radius: 20px;
+.cases-card-score {
+  color: var(--act);
+  font-weight: 700;
 }
 
-.cases-card-score {
-  color: var(--cases-warning);
+.cases-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+}
+
+.cases-card-progress {
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  background: var(--alt);
+  border-radius: var(--radius-pill);
+}
+
+.cases-card-progress span {
+  display: block;
+  height: 100%;
+  background: var(--case-color);
+  border-radius: inherit;
 }
 
 .cases-card-cta {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: auto;
-  color: var(--cases-accent);
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--acc);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-/* SESSION */
+/* ===== SESSION HEADER ===== */
 
 .cases-session {
   display: flex;
@@ -204,57 +238,212 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
-  padding: 14px 16px;
-  background: var(--cases-card);
-  border: 1px solid var(--cases-border);
-  border-radius: 13px;
+  gap: 12px 18px;
+  padding: 10px 12px;
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
 }
 
-.cases-session-header .cases-stepper {
-  flex: 1;
-  min-width: 320px;
+.cases-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: var(--alt);
+  border: none;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cases-back:hover {
+  background: var(--soft);
+}
+
+.cases-session-patient {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cases-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  color: var(--hero-act);
+  background: var(--hero-bg);
+  border-radius: 16px;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.cases-session-patient h2 {
   margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-/* WORKSPACE: 3D VIEWER + STEP CONTENT */
+.cases-session-patient p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.cases-progress {
+  flex: 1 1 340px;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.cases-progress-label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cases-stepper {
+  /* The stepper is its own container: icons drop before any label is clipped. */
+  container-type: inline-size;
+  container-name: stepper;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cases-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 34px;
+  padding: 12px 4px 2px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* The segment of the progress bar. */
+.cases-step::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 6px;
+  content: "";
+  background: var(--line2);
+  border-radius: var(--radius-pill);
+}
+
+/* Labels are short words: never clipped, they keep their full text. */
+.cases-step span {
+  white-space: nowrap;
+}
+
+.cases-step svg {
+  flex-shrink: 0;
+}
+
+@container stepper (max-width: 420px) {
+  .cases-step {
+    gap: 0;
+    padding-inline: 2px;
+    font-size: 11px;
+  }
+
+  .cases-step svg {
+    display: none;
+  }
+}
+
+.cases-step.done {
+  color: var(--ink);
+}
+
+.cases-step.done::before {
+  background: var(--acc);
+}
+
+.cases-step.current {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.cases-step.current::before {
+  background: var(--cta);
+}
+
+.cases-step:hover:not(:disabled) {
+  color: var(--act);
+}
+
+.cases-step:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.cases-step:disabled {
+  color: var(--muted2);
+  cursor: not-allowed;
+}
+
+/* ===== WORKSPACE: STAGE + PANEL ===== */
 
 .cases-workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
   align-items: start;
+  gap: 16px;
 }
 
-.case-viewer {
+.case-viewer,
+.case-viewer-loading {
   position: sticky;
   top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.case-viewer-canvas {
-  position: relative;
-  height: min(68vh, 620px);
-  min-height: 360px;
+  height: min(78vh, 760px);
+  min-height: 520px;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 40%, #142936 0%, #0b1622 48%, #080f1b 100%);
-  border: 1px solid var(--cases-border);
-  border-radius: 13px;
+  /* Faint dot grid over the stage, like imaging software. */
+  background:
+    radial-gradient(var(--grid-dot) 1px, transparent 1px) 0 0 / 18px 18px,
+    radial-gradient(ellipse 70% 70% at 50% 50%, var(--stage-a) 0%, var(--stage-b) 100%);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius-lg);
 }
 
 .case-viewer-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: min(68vh, 620px);
-  min-height: 360px;
-  color: var(--cases-muted);
-  background: var(--cases-card);
-  border: 1px solid var(--cases-border);
-  border-radius: 13px;
-  font-size: 13px;
+  color: var(--hud-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.case-viewer-canvas {
+  position: absolute;
+  inset: 0;
 }
 
 .case-viewer-canvas canvas {
@@ -265,406 +454,485 @@
 
 .case-viewer-toolbar {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
+  top: 16px;
+  left: 50%;
+  z-index: 4;
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 4px;
+  max-width: calc(100% - 32px);
+  padding: 5px;
+  border-radius: var(--radius-pill);
+  transform: translateX(-50%);
 }
 
 .case-viewer-toolbar button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 10px;
-  color: var(--cases-muted);
-  background: rgba(8, 15, 27, 0.82);
-  border: 1px solid var(--cases-border);
-  border-radius: 20px;
-  font-size: 11px;
+  min-height: 34px;
+  padding: 0 12px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 
-.case-viewer-toolbar button:hover,
+/* "Capas" control: one toolbar button opening the see-through and zones toggles. */
+.case-viewer-layers {
+  position: relative;
+}
+
+.case-viewer-layers-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 170px;
+  padding: 6px;
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+}
+
+.case-viewer-layers-menu label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 10px;
+  color: var(--ink);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.case-viewer-layers-menu label:hover {
+  background: var(--soft);
+}
+
+.case-viewer-layers-menu label.disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.case-viewer-layers-menu label.disabled:hover {
+  background: transparent;
+}
+
+.case-viewer-layers-menu input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--acc);
+  cursor: inherit;
+}
+
+.case-viewer-layers-menu input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Floating pill in the panel when the 3D stage changes off-screen. */
+.case-viewer-notice-anchor {
+  position: sticky;
+  top: 16px;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  height: 0;
+}
+
+.case-viewer-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 16px;
+  color: var(--on-acc);
+  background: var(--acc);
+  border: none;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  /* Sits above the panel's top padding, not over the first content line. */
+  transform: translateY(-8px);
+}
+
+.case-viewer-notice:hover {
+  background: var(--act);
+}
+
+.case-viewer-notice:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.case-viewer-toolbar button:hover:not(:disabled) {
+  background: var(--soft);
+}
+
 .case-viewer-toolbar button.active {
-  color: var(--cases-accent);
-  border-color: var(--cases-accent-border);
+  color: var(--on-acc);
+  background: var(--acc);
 }
 
 .case-viewer-toolbar button:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
+}
+
+.case-viewer-toolbar button:focus-visible,
+.case-viewer-zones button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }
 
 .case-viewer-label {
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 10px 14px;
-  color: var(--cases-text);
-  background: rgba(8, 15, 27, 0.9);
-  border: 1px solid var(--cases-accent-border);
-  border-radius: 10px;
-  font-size: 12px;
-  text-align: center;
-  pointer-events: none;
+  top: 72px;
+  right: 16px;
+  z-index: 3;
+  max-width: 260px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+}
+
+.case-viewer-label strong {
+  font-size: 14px;
 }
 
 .case-viewer-label p {
-  margin: 6px 0 0;
-  color: var(--cases-body);
-  font-size: 11px;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
   line-height: 1.5;
-  text-align: left;
 }
 
 .case-viewer-zones {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 3;
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 240px;
+  padding: 8px;
+  border-radius: var(--radius-md);
 }
 
 .case-viewer-zones button {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 11px;
-  color: var(--cases-body);
-  background: var(--cases-card);
-  border: 1px solid var(--cases-border);
-  border-radius: 20px;
-  font-size: 11px;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 10px;
+  color: var(--ink);
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .case-viewer-zones button:hover,
 .case-viewer-zones button.active {
-  color: var(--cases-text);
-  border-color: var(--cases-accent);
+  background: var(--soft);
 }
 
 .case-viewer-zones button.affected {
-  border-color: var(--cases-warning);
+  color: var(--warn);
 }
 
 .case-viewer-zones span {
+  flex-shrink: 0;
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
 
 .case-viewer-zones em {
-  padding: 1px 6px;
-  color: #1a1206;
-  background: var(--cases-warning);
-  border-radius: 10px;
-  font-size: 9px;
+  margin-left: auto;
+  padding: 2px 7px;
+  color: var(--warn);
+  background: var(--warn-s);
+  border-radius: var(--radius-pill);
+  font-size: 10px;
   font-style: normal;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .case-viewer-finding {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 3;
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 13px 15px;
-  color: var(--cases-muted);
-  background: var(--cases-card);
-  border: 1px dashed var(--cases-border);
-  border-radius: 11px;
+  max-width: min(340px, calc(100% - 290px));
+  padding: 12px 14px;
+  color: var(--hud-text);
+  border-radius: var(--radius-md);
 }
 
 .case-viewer-finding.revealed {
-  color: var(--cases-accent);
-  border: 1px solid var(--cases-accent-border);
-  background: linear-gradient(110deg, #153b38, #111c28);
+  color: var(--warn);
+  border-color: var(--warn);
 }
 
 .case-viewer-finding svg {
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .case-viewer-finding p {
   margin: 0;
-  color: var(--cases-body);
-  font-size: 12px;
-  line-height: 1.6;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
+/* Side panel with the current step and the footer actions. */
 .cases-content {
   display: flex;
   flex-direction: column;
-  padding: 22px;
-  background: var(--cases-card);
-  border: 1px solid var(--cases-border);
-  border-radius: 13px;
-}
-
-.cases-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 13px;
-  color: var(--cases-accent);
-  background: var(--cases-accent-soft);
-  border: 1px solid var(--cases-accent-border);
-  border-radius: 8px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cases-session-patient {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.cases-session-patient h2 {
-  margin: 0 0 4px;
-  color: var(--cases-text);
-  font-size: 18px;
-}
-
-.cases-session-patient p {
-  margin: 0;
-  color: var(--cases-muted);
-  font-size: 12px;
-}
-
-.cases-stepper {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0 0 24px;
-  padding: 0;
-  list-style: none;
-}
-
-.cases-step {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  width: 100%;
-  padding: 11px 8px;
-  color: var(--cases-muted);
-  background: var(--cases-deep);
-  border: 1px solid var(--cases-border);
-  border-radius: 9px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cases-step span {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  padding: 20px;
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
 }
 
-.cases-step svg {
-  flex-shrink: 0;
-}
-
-.cases-step.done {
-  color: var(--cases-accent);
-  border-color: var(--cases-accent-border);
-}
-
-.cases-step.current {
-  color: #071713;
-  background: var(--cases-accent);
-  border-color: var(--cases-accent);
-  font-weight: 700;
-}
-
-.cases-step:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+/* ===== STEP CONTENT ===== */
 
 .cases-panel {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .cases-intro {
   margin: 0;
-  color: var(--cases-muted);
-  font-size: 13px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .cases-reason {
-  padding: 16px 18px;
-  background: var(--cases-deep);
-  border-left: 3px solid var(--cases-accent);
-  border-radius: 6px;
+  padding: 14px 16px;
+  background: var(--soft);
+  border-radius: var(--radius-md);
 }
 
-.cases-reason span {
-  color: var(--cases-accent);
+.cases-reason span,
+.cases-sources span,
+.cases-explanation-compare span,
+.cases-rubric span {
+  display: block;
+  color: var(--muted);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
-.cases-reason p {
-  margin: 8px 0 0;
-  color: var(--cases-text);
-  font-size: 14px;
-  font-style: italic;
-  line-height: 1.6;
+.cases-reason span {
+  color: var(--acc);
 }
 
-
-.cases-block {
-  padding: 18px;
-  background: var(--cases-deep);
-  border: 1px solid var(--cases-border);
-  border-radius: 11px;
+.cases-reason p {
+  margin: 6px 0 0;
+  color: var(--acc);
+  font-family: var(--font-heading);
+  font-size: 17px;
+  line-height: 1.45;
 }
 
 .cases-block h3 {
   display: flex;
   align-items: center;
-  gap: 7px;
-  margin: 0 0 13px;
-  color: var(--cases-accent);
-  font-size: 14px;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cases-block h3 svg {
+  color: var(--act);
 }
 
 .cases-data {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   margin: 0;
 }
 
 .cases-data div {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 13px;
+  padding: 10px 12px;
+  background: var(--alt);
+  border-radius: var(--radius-sm);
 }
 
 .cases-data dt {
-  color: var(--cases-muted);
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .cases-data dd {
-  margin: 0;
-  color: var(--cases-text);
-  text-align: right;
+  margin: 2px 0 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .cases-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin: 0;
   padding-left: 18px;
-  color: var(--cases-body);
-  font-size: 13px;
+  color: var(--ink);
+  font-size: 14px;
   line-height: 1.5;
 }
 
 .cases-goal {
-  color: var(--cases-body);
+  padding: 12px 14px;
+  color: var(--muted);
+  border: 1px dashed var(--line2);
+  border-radius: var(--radius-sm);
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 .cases-goal strong {
-  color: var(--cases-accent);
+  color: var(--ink);
 }
 
-/* TESTS */
-
-.cases-test-options {
+/* Options (test checkboxes and answer radios). */
+.cases-test-options,
+.cases-questions {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.cases-questions {
+  gap: 14px;
+}
+
+.cases-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 13px;
+  color: var(--ink);
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.cases-option:hover {
+  border-color: var(--ring);
+}
+
+.cases-option.selected {
+  background: var(--soft);
+  border-color: var(--act);
+}
+
+.cases-option:focus-within {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.cases-option input {
+  flex-shrink: 0;
+  margin: 3px 0 0;
+  accent-color: var(--act);
 }
 
 .cases-test-options .cases-option span {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .cases-test-options strong {
-  color: var(--cases-text);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .cases-test-options small {
-  color: var(--cases-muted);
-  font-size: 11px;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .cases-notice {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 13px 15px;
-  color: var(--cases-warning);
-  background: rgba(242, 184, 75, 0.08);
-  border: 1px solid rgba(242, 184, 75, 0.3);
-  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--warn);
+  background: var(--warn-s);
+  border-radius: var(--radius-sm);
 }
 
 .cases-notice svg {
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .cases-notice p {
   margin: 0;
-  color: var(--cases-text);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.cases-provided {
-  align-self: flex-start;
-  padding: 3px 8px;
-  color: var(--cases-warning);
-  background: rgba(242, 184, 75, 0.12);
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 700;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .cases-tests {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
 .cases-test {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  padding: 17px;
-  background: var(--cases-deep);
-  border: 1px solid var(--cases-border);
-  border-left: 3px solid var(--cases-accent);
-  border-radius: 10px;
+  gap: 4px;
+  padding: 14px;
+  background: var(--alt);
+  border-left: 4px solid var(--act);
+  border-radius: var(--radius-sm);
 }
 
-.cases-test.attention {
-  border-left-color: var(--cases-warning);
-}
-
+.cases-test.attention,
 .cases-test.alert {
-  border-left-color: var(--cases-danger);
+  border-left-color: var(--warn);
 }
 
 .cases-test-header {
@@ -676,115 +944,85 @@
 
 .cases-test h3 {
   margin: 0;
-  color: var(--cases-muted);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .cases-test strong {
-  color: var(--cases-text);
-  font-size: 14px;
-  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .cases-test small {
-  color: var(--cases-muted);
-  font-size: 11px;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .cases-test p {
-  margin: 0;
-  color: var(--cases-body);
-  font-size: 12px;
-  line-height: 1.5;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
-.cases-badge {
-  padding: 3px 8px;
-  border-radius: 20px;
-  font-size: 10px;
+.cases-badge,
+.cases-provided {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
   font-weight: 700;
 }
 
 .cases-badge.normal {
-  color: var(--cases-accent);
-  background: rgba(66, 214, 176, 0.12);
+  color: var(--acc);
+  background: var(--soft);
 }
 
-.cases-badge.attention {
-  color: var(--cases-warning);
-  background: rgba(242, 184, 75, 0.12);
-}
-
+.cases-badge.attention,
 .cases-badge.alert {
-  color: var(--cases-danger);
-  background: rgba(242, 115, 107, 0.12);
+  color: var(--warn);
+  background: var(--warn-s);
 }
 
-/* QUESTIONS */
-
-.cases-questions {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.cases-provided {
+  margin-top: 6px;
+  color: var(--muted);
+  border: 1px dashed var(--line2);
 }
 
+/* Questions. */
 .cases-question {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
   margin: 0;
-  padding: 18px;
-  background: var(--cases-deep);
-  border: 1px solid var(--cases-border);
-  border-radius: 11px;
+  padding: 16px;
+  background: var(--alt);
+  border: none;
+  border-radius: var(--radius-md);
 }
 
 .cases-question legend {
   float: left;
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   padding: 0;
-  color: var(--cases-text);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.5;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .cases-question legend span {
   display: block;
-  margin-bottom: 5px;
-  color: var(--cases-accent);
+  margin-bottom: 4px;
+  color: var(--act);
   font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
-}
-
-.cases-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 13px;
-  color: var(--cases-body);
-  background: var(--cases-card);
-  border: 1px solid var(--cases-border);
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.cases-option:hover {
-  border-color: var(--cases-accent-border);
-}
-
-.cases-option.selected {
-  color: var(--cases-text);
-  background: var(--cases-accent-soft);
-  border-color: var(--cases-accent);
-}
-
-.cases-option input {
-  accent-color: var(--cases-accent);
 }
 
 .cases-hints {
@@ -800,173 +1038,123 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 9px 12px;
-  color: var(--cases-text);
-  background: rgba(242, 184, 75, 0.08);
-  border-left: 3px solid var(--cases-warning);
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 9px 11px;
+  color: var(--ink);
+  background: var(--warn-s);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
   line-height: 1.5;
 }
 
 .cases-hints svg {
   flex-shrink: 0;
   margin-top: 2px;
-  color: var(--cases-warning);
+  color: var(--warn);
 }
 
 .cases-hint-button {
   display: inline-flex;
-  align-self: flex-start;
   align-items: center;
+  align-self: flex-start;
   gap: 6px;
-  margin-top: 4px;
-  padding: 7px 11px;
-  color: var(--cases-warning);
+  min-height: 34px;
+  padding: 0 12px;
+  color: var(--warn);
   background: transparent;
-  border: 1px dashed rgba(242, 184, 75, 0.5);
-  border-radius: 8px;
-  font-size: 11px;
+  border: 1px solid var(--warn);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .cases-hint-button:hover {
-  background: rgba(242, 184, 75, 0.08);
+  background: var(--warn-s);
 }
 
 .cases-explanation label {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  color: var(--cases-text);
+  gap: 4px;
   font-size: 14px;
-  font-weight: 600;
-  line-height: 1.5;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .cases-explanation label span {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--cases-accent);
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .cases-explanation textarea {
   width: 100%;
-  padding: 12px;
-  color: var(--cases-text);
-  background: var(--cases-card);
-  border: 1px solid var(--cases-border);
-  border-radius: 8px;
-  font: inherit;
-  font-size: 13px;
-  line-height: 1.6;
-  resize: vertical;
   box-sizing: border-box;
+  padding: 12px;
+  color: var(--ink);
+  background: var(--surf);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
 }
 
 .cases-explanation textarea:focus {
-  outline: none;
-  border-color: var(--cases-accent);
+  outline: 2px solid var(--ring);
+  border-color: var(--act);
 }
 
 .cases-explanation small {
   align-self: flex-end;
-  color: var(--cases-muted);
-  font-size: 11px;
-}
-
-.cases-explanation-compare {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.cases-explanation-compare span,
-.cases-rubric span {
-  color: var(--cases-muted);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.cases-explanation-compare p {
-  margin: 8px 0 0;
-  padding: 12px;
-  color: var(--cases-body);
-  background: var(--cases-card);
-  border-radius: 8px;
-  font-size: 13px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-
-.cases-explanation-compare p.cases-empty {
-  color: var(--cases-muted);
-  font-style: italic;
-}
-
-.cases-rubric {
-  margin-top: 14px;
-}
-
-.cases-rubric ul {
-  margin: 8px 0 0;
-  padding-left: 18px;
-  color: var(--cases-body);
+  color: var(--muted);
   font-size: 12px;
-  line-height: 1.8;
 }
 
-@media (max-width: 700px) {
-  .cases-explanation-compare {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* FEEDBACK */
-
+/* Feedback. */
 .cases-score {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 20px;
-  background: linear-gradient(110deg, #153b38, #111c28);
-  border: 1px solid var(--cases-accent-border);
-  border-radius: 13px;
+  gap: 16px;
+  padding: 16px;
+  background: var(--soft);
+  border-radius: var(--radius-md);
 }
 
 .cases-score-value {
-  color: var(--cases-accent);
-  font-size: 36px;
+  color: var(--acc);
+  font-family: var(--font-heading);
+  font-size: 44px;
   font-weight: 800;
+  line-height: 1;
 }
 
 .cases-score h3 {
-  margin: 0 0 6px;
-  color: var(--cases-text);
+  margin: 0 0 4px;
   font-size: 16px;
 }
 
 .cases-score p {
   margin: 0;
-  color: var(--cases-muted);
+  color: var(--muted);
   font-size: 12px;
+  line-height: 1.5;
 }
 
 .cases-score-breakdown {
-  margin-bottom: 4px !important;
-  color: var(--cases-body) !important;
+  color: var(--ink) !important;
+  font-weight: 600;
 }
 
 .cases-test-review {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -976,9 +1164,9 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  color: var(--cases-body);
-  font-size: 12px;
-  line-height: 1.6;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .cases-test-review svg {
@@ -987,91 +1175,120 @@
 }
 
 .cases-test-review strong {
-  color: var(--cases-text);
+  color: var(--ink);
 }
 
 .cases-test-review .correct svg {
-  color: var(--cases-accent);
+  color: var(--act);
 }
 
-.cases-test-review .wrong svg {
-  color: var(--cases-danger);
-}
-
+.cases-test-review .wrong svg,
 .cases-test-review .warning svg {
-  color: var(--cases-warning);
+  color: var(--warn);
 }
 
 .cases-review {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .cases-review-item {
-  padding: 16px 18px;
-  background: var(--cases-deep);
-  border: 1px solid var(--cases-border);
-  border-left: 3px solid var(--cases-accent);
-  border-radius: 10px;
+  padding: 14px;
+  background: var(--alt);
+  border-left: 4px solid var(--act);
+  border-radius: var(--radius-sm);
 }
 
 .cases-review-item.wrong {
-  border-left-color: var(--cases-danger);
+  border-left-color: var(--warn);
 }
 
 .cases-review-title {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-bottom: 10px;
-  color: var(--cases-text);
+  margin-bottom: 8px;
   font-size: 14px;
+  line-height: 1.45;
 }
 
 .cases-review-item.correct .cases-review-title svg {
   flex-shrink: 0;
-  color: var(--cases-accent);
+  color: var(--act);
 }
 
 .cases-review-item.wrong .cases-review-title svg {
   flex-shrink: 0;
-  color: var(--cases-danger);
+  color: var(--warn);
 }
 
 .cases-review-item p {
   margin: 0 0 6px;
-  color: var(--cases-muted);
+  color: var(--muted);
   font-size: 13px;
 }
 
 .cases-review-item em {
-  color: var(--cases-text);
+  color: var(--ink);
   font-style: normal;
+  font-weight: 600;
 }
 
 .cases-review-feedback {
   margin-top: 10px !important;
-  color: var(--cases-body) !important;
+  color: var(--ink) !important;
   line-height: 1.6;
 }
 
 .cases-analysis p {
   margin: 0;
-  color: var(--cases-body);
+  color: var(--ink);
   font-size: 14px;
   line-height: 1.7;
+}
+
+.cases-explanation-compare {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.cases-explanation-compare p {
+  margin: 6px 0 0;
+  padding: 12px;
+  color: var(--ink);
+  background: var(--alt);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.cases-explanation-compare p.cases-empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.cases-rubric {
+  margin-top: 12px;
+}
+
+.cases-rubric ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .cases-key {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 16px 18px;
-  color: var(--cases-warning);
-  background: rgba(242, 184, 75, 0.08);
-  border: 1px solid rgba(242, 184, 75, 0.3);
-  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--warn);
+  background: var(--warn-s);
+  border-radius: var(--radius-md);
 }
 
 .cases-key svg {
@@ -1080,59 +1297,68 @@
 
 .cases-key p {
   margin: 0;
-  color: var(--cases-text);
+  color: var(--ink);
   font-size: 13px;
   line-height: 1.6;
-}
-
-.cases-sources span {
-  color: var(--cases-muted);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
 }
 
 .cases-sources ul {
   margin: 8px 0 0;
   padding-left: 18px;
-  color: var(--cases-muted);
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
-/* ACTIONS */
+/* ===== ACTIONS ===== */
 
+/* Primary footer stays reachable: it sticks to the bottom of the viewport
+   while the panel scrolls under it, and rests at the panel's end. */
 .cases-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--cases-border);
+  /* Bleeds over the panel padding so scrolling content never shows around it. */
+  margin: 20px -20px -20px;
+  padding: 14px 20px max(16px, env(safe-area-inset-bottom));
+  background: var(--surf);
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* Room so the last line of content is never left under the footer. */
+.cases-content-body {
+  padding-bottom: 8px;
 }
 
 .cases-primary,
 .cases-secondary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
-  padding: 11px 17px;
-  border-radius: 8px;
-  font-size: 13px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .cases-primary {
-  color: #071713;
-  background: var(--cases-accent);
+  color: var(--cta-ink);
+  background: var(--cta);
   border: none;
 }
 
 .cases-primary:hover:not(:disabled) {
-  background: #65e7c6;
+  background: var(--cta-hover);
 }
 
 .cases-primary:disabled {
@@ -1141,69 +1367,358 @@
 }
 
 .cases-secondary {
-  color: var(--cases-accent);
+  color: var(--ink);
   background: transparent;
-  border: 1px solid var(--cases-accent-border);
+  border: 1px solid var(--line2);
+}
+
+.cases-secondary:hover {
+  background: var(--alt);
+}
+
+.cases-primary:focus-visible,
+.cases-secondary:focus-visible,
+.cases-back:focus-visible,
+.cases-hint-button:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .cases-disclaimer {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  margin-top: 20px;
-  padding: 13px 15px;
-  color: var(--cases-muted);
-  background: var(--cases-deep);
-  border-left: 3px solid var(--cases-accent);
-  border-radius: 5px;
+  padding: 12px 14px;
+  color: var(--muted);
+  background: var(--view);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   font-size: 12px;
+  line-height: 1.5;
 }
 
-/* RESPONSIVE */
+.cases-disclaimer svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--warn);
+}
 
-@media (max-width: 1100px) {
+/* ===== RESPONSIVE ===== */
+
+/* Two columns only when the stage gets enough room next to the panel. */
+@container cases (max-width: 960px) {
   .cases-workspace {
     grid-template-columns: 1fr;
   }
 
+  .case-viewer,
+  .case-viewer-loading {
+    position: relative;
+    top: auto;
+    height: 60vh;
+    min-height: 420px;
+  }
+}
+
+/* Phones: the stage keeps the toolbar; legend and finding go below it. */
+@media (max-width: 700px) {
+  .cases-session-header {
+    padding: 10px;
+  }
+
+  .cases-progress {
+    flex-basis: 100%;
+  }
+
+  .cases-step svg {
+    display: none;
+  }
+
+  .cases-step {
+    font-size: 11px;
+  }
+
   .case-viewer {
-    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: auto;
+    min-height: 0;
+    padding-bottom: 10px;
   }
 
   .case-viewer-canvas {
-    height: 50vh;
-    min-height: 300px;
+    position: relative;
+    inset: auto;
+    height: 380px;
   }
-}
 
-@media (max-width: 950px) {
-  .cases-stepper {
+  .case-viewer-toolbar {
+    top: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .case-viewer-toolbar {
+    gap: 2px;
+    padding: 4px;
+  }
+
+  /* One row on a ~343px stage: the view buttons keep their text, not the icon. */
+  .case-viewer-toolbar button {
+    gap: 4px;
+    padding: 0 9px;
+  }
+
+  .case-viewer-toolbar > button svg {
+    display: none;
+  }
+
+  .case-viewer-label {
+    top: auto;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    max-width: none;
+  }
+
+  .case-viewer-zones,
+  .case-viewer-finding {
+    position: static;
+    max-width: none;
+    margin: 0 10px;
+  }
+
+  .case-viewer-zones {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
 
-@media (max-width: 850px) {
-  .cases-cards,
-  .cases-tests {
-    grid-template-columns: 1fr;
+  .case-viewer-zones button {
+    flex-wrap: wrap;
+    min-width: 0;
+    padding: 6px 8px;
   }
-}
 
-@media (max-width: 600px) {
+  .case-viewer-zones em {
+    margin-left: 0;
+  }
+
+  .case-viewer-loading {
+    height: 380px;
+    min-height: 0;
+  }
+
   .cases-content {
     padding: 16px;
   }
 
-  .cases-session-header .cases-stepper {
-    min-width: 100%;
+  .cases-actions {
+    margin: 16px -16px -16px;
+    padding: 12px 16px max(12px, env(safe-area-inset-bottom));
   }
 
-  .cases-actions {
-    justify-content: stretch;
+  .cases-data {
+    grid-template-columns: 1fr 1fr;
   }
 
   .cases-actions button {
-    flex: 1;
-    justify-content: center;
+    flex: 1 1 auto;
+  }
+}
+
+/* Physical exam (digital rectal exam) in selected cases. */
+.cases-exam {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 14px;
+  border-left: 3px solid var(--hud);
+}
+
+.cases-exam h3 {
+  margin-bottom: 0;
+}
+
+.cases-exam-instruction {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.cases-exam-start {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 16px;
+  color: var(--on-acc);
+  background: var(--acc);
+  border: none;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cases-exam-start:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cases-exam-start:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.cases-exam-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cases-exam-finding {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.cases-exam-finding legend {
+  margin-bottom: 6px;
+  padding: 0;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cases-exam-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cases-exam-options .cases-option {
+  flex: 1 1 140px;
+}
+
+.cases-exam-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: var(--warn-s);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+.cases-exam-alert svg {
+  flex-shrink: 0;
+  color: var(--warn);
+}
+
+.cases-exam-review {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cases-exam-review li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.cases-exam-review li > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.cases-exam-review em {
+  color: var(--warn);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.cases-exam-review small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.cases-exam-review svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cases-exam-review .correct svg {
+  color: var(--act);
+}
+
+.cases-exam-review .wrong svg {
+  color: var(--warn);
+}
+
+/* Hotspot on the posterior face of the 3D prostate. */
+.case-viewer-hotspot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: var(--glass);
+  border: 2px solid var(--hud);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--hud-glow);
+  cursor: pointer;
+}
+
+.case-viewer-hotspot span {
+  width: 10px;
+  height: 10px;
+  background: var(--hud);
+  border-radius: 50%;
+}
+
+.case-viewer-hotspot::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--hud);
+  border-radius: 50%;
+  animation: case-hotspot-pulse 1.6s ease-out infinite;
+  pointer-events: none;
+}
+
+.case-viewer-hotspot:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+@keyframes case-hotspot-pulse {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-viewer-hotspot::after {
+    animation: none;
+    opacity: 0.5;
+    transform: scale(1.35);
   }
 }

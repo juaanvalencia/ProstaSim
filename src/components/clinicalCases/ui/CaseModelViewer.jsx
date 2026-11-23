@@ -1,12 +1,16 @@
-import { useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
 import * as THREE from "three";
-import { Eye, Focus, Layers, ScanSearch } from "lucide-react";
+import { ChevronDown, Focus, Layers, ScanSearch } from "lucide-react";
 
 import AnatomyScene from "../../anatomy/AnatomyScene";
 import { DEFAULT_VISIBILITY, ORGANOS } from "../../anatomy/anatomyData";
 import ProstateZones from "./ProstateZones";
-import { PROSTATE_ZONES } from "../data/prostateZones";
+import { PROSTATE_CENTER, PROSTATE_ZONES } from "../data/prostateZones";
+
+// Posterior surface of the prostate (-z faces the rectum): reached by the DRE.
+const PALPATION_POINT = [PROSTATE_CENTER[0], PROSTATE_CENTER[1], -0.011];
 
 // Closer than the anatomy module: cases focus on the prostate, not the whole pelvis.
 const CAMERA_POSITIONS = {
@@ -29,9 +33,95 @@ const CASE_VISIBILITY = {
   Testes_and_Epididymis: false,
 };
 
-export default function CaseModelViewer({ model, revealed }) {
+// "Capas" menu: groups the see-through and zones toggles in one toolbar control.
+function LayersMenu({ seeThrough, showZones, onSeeThrough, onShowZones }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef(null);
+  const triggerRef = useRef(null);
+  const menuId = useId();
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const closeOutside = (event) => {
+      if (!rootRef.current?.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  return (
+    <div className="case-viewer-layers" ref={rootRef}>
+      <button
+        ref={triggerRef}
+        type="button"
+        className={open ? "active" : ""}
+        aria-expanded={open}
+        aria-controls={menuId}
+        onClick={() => setOpen((value) => !value)}
+        title="Capas del modelo"
+      >
+        <Layers size={13} />
+        Capas
+        <ChevronDown size={13} aria-hidden="true" />
+      </button>
+
+      {open && (
+        <div className="case-viewer-layers-menu" id={menuId} role="group" aria-label="Capas del modelo">
+          <label>
+            <input
+              type="checkbox"
+              checked={seeThrough}
+              onChange={(event) => onSeeThrough(event.target.checked)}
+            />
+            Transparencia
+          </label>
+          <label className={seeThrough ? "" : "disabled"}>
+            <input
+              type="checkbox"
+              checked={showZones && seeThrough}
+              disabled={!seeThrough}
+              onChange={(event) => onShowZones(event.target.checked)}
+            />
+            Zonas
+          </label>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function CaseModelViewer({
+  model,
+  revealed,
+  examActive = false,
+  showHotspot = false,
+  onPalpate,
+  stageRef,
+}) {
   const [view, setView] = useState("reset");
   const [viewRequest, setViewRequest] = useState(0);
+  const [examWasActive, setExamWasActive] = useState(false);
+
+  // When the physical exam starts, turn the model to show its posterior face.
+  if (examActive !== examWasActive) {
+    setExamWasActive(examActive);
+    if (examActive) {
+      setView("posterior");
+      setViewRequest((request) => request + 1);
+    }
+  }
   const [selectedOrgan, setSelectedOrgan] = useState(null);
   const [selectedZone, setSelectedZone] = useState(null);
   const [seeThrough, setSeeThrough] = useState(true);
@@ -84,7 +174,7 @@ export default function CaseModelViewer({ model, revealed }) {
   };
 
   return (
-    <div className="case-viewer">
+    <div className="case-viewer" ref={stageRef}>
       <div className="case-viewer-canvas">
         <Canvas
           camera={{
@@ -114,6 +204,20 @@ export default function CaseModelViewer({ model, revealed }) {
                 onSelectZone={selectZone}
               />
             )}
+
+            {showHotspot && (
+              <Html position={PALPATION_POINT} center zIndexRange={[20, 0]}>
+                <button
+                  type="button"
+                  className="case-viewer-hotspot"
+                  aria-label="Palpar la cara posterior de la próstata"
+                  title="Palpar la cara posterior de la próstata"
+                  onClick={onPalpate}
+                >
+                  <span aria-hidden="true" />
+                </button>
+              </Html>
+            )}
           </AnatomyScene>
         </Canvas>
 
@@ -128,23 +232,12 @@ export default function CaseModelViewer({ model, revealed }) {
               {item.label}
             </button>
           ))}
-          <button
-            className={seeThrough ? "active" : ""}
-            onClick={() => setSeeThrough((value) => !value)}
-            title="Ver estructuras internas"
-          >
-            <Eye size={13} />
-            Transparencia
-          </button>
-          <button
-            className={showZones && seeThrough ? "active" : ""}
-            disabled={!seeThrough}
-            onClick={() => setShowZones((value) => !value)}
-            title="Mostrar zonas de la próstata"
-          >
-            <Layers size={13} />
-            Zonas
-          </button>
+          <LayersMenu
+            seeThrough={seeThrough}
+            showZones={showZones}
+            onSeeThrough={setSeeThrough}
+            onShowZones={setShowZones}
+          />
         </div>
 
         {(organInfo || zoneInfo) && (

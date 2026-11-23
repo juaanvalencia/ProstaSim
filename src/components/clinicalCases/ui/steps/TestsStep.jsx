@@ -13,10 +13,14 @@ export default function TestsStep({
   selection,
   locked,
   onToggle,
+  hiddenResultIds = [],
+  children,
 }) {
   const visibleIds = new Set([...requestedIds, ...providedIds]);
   const available = tests.filter((test) => !visibleIds.has(test.id));
-  const results = tests.filter((test) => visibleIds.has(test.id));
+  const results = tests.filter(
+    (test) => visibleIds.has(test.id) && !hiddenResultIds.includes(test.id)
+  );
 
   return (
     <section className="cases-panel">
@@ -63,6 +67,8 @@ export default function TestsStep({
           </p>
         </div>
       )}
+
+      {children}
 
       {results.length > 0 && (
         <div className="cases-tests">

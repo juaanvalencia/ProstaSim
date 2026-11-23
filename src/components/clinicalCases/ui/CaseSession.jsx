@@ -1,8 +1,9 @@
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   CheckCircle2,
   ClipboardList,
   FlaskConical,
@@ -17,16 +18,26 @@ import PatientStep from "./steps/PatientStep";
 import TestsStep from "./steps/TestsStep";
 import QuestionsStep from "./steps/QuestionsStep";
 import FeedbackStep from "./steps/FeedbackStep";
+import PhysicalExam from "./steps/PhysicalExam";
 import { gradeCase } from "../logic/scoring";
+import { gradePalpation } from "../logic/palpation";
 
 const steps = [
   { id: "patient", label: "Paciente", icon: User },
   { id: "tests", label: "Pruebas", icon: FlaskConical },
   { id: "questions", label: "Preguntas", icon: ClipboardList },
-  { id: "feedback", label: "Retroalimentación", icon: Lightbulb },
+  { id: "feedback", label: "Resultado", icon: Lightbulb },
 ];
 
 const FEEDBACK_STEP = 3;
+
+// Share of the stage that must be on screen to count as "seen".
+const STAGE_VISIBLE_RATIO = 0.3;
+
+const NOTICE_TEXT = {
+  finding: "Nuevo hallazgo en el modelo 3D",
+  exam: "Examen físico disponible en el modelo 3D",
+};
 
 export default function CaseSession({
   clinicalCase,
@@ -43,12 +54,80 @@ export default function CaseSession({
   const [explanation, setExplanation] = useState("");
   const [result, setResult] = useState(null);
   const [saveStatus, setSaveStatus] = useState("idle");
+  // Physical exam: "pending" (asked to touch the model), "form", "done".
+  const [examStage, setExamStage] = useState("pending");
+  const [palpationAnswers, setPalpationAnswers] = useState({});
+  const [examBlocked, setExamBlocked] = useState(false);
 
-  const { patient, questions, tests, model } = clinicalCase;
+  const { patient, questions, tests, model, palpation } = clinicalCase;
   const currentStep = steps[stepIndex].id;
   const allAnswered = questions.every((question) => answers[question.id]);
+
+  // Only a requested DRE asks for the exam; an auto-provided one is shown as is.
+  const examRequested = Boolean(palpation) && requestedIds.includes("dre");
+  const examPending = examRequested && examStage !== "done";
+  const palpationResult =
+    examRequested && examStage === "done"
+      ? gradePalpation(palpation, palpationAnswers)
+      : null;
+  const revealedByPendingExam = examPending && model.revealedBy === "dre";
   const modelRevealed =
-    requestedIds.includes(model.revealedBy) || providedIds.includes(model.revealedBy);
+    (requestedIds.includes(model.revealedBy) && !revealedByPendingExam) ||
+    providedIds.includes(model.revealedBy);
+  const showHotspot = examPending && examStage === "pending";
+
+  // Off-screen notice: the 3D stage changed while the user could not see it.
+  const [stageEl, setStageEl] = useState(null);
+  const [stageVisible, setStageVisible] = useState(true);
+  const [notice, setNotice] = useState(null);
+  const [seenModel, setSeenModel] = useState({
+    revealed: modelRevealed,
+    hotspot: showHotspot,
+  });
+
+  if (
+    seenModel.revealed !== modelRevealed ||
+    seenModel.hotspot !== showHotspot
+  ) {
+    setSeenModel({ revealed: modelRevealed, hotspot: showHotspot });
+    if (modelRevealed && !seenModel.revealed && !stageVisible) {
+      setNotice("finding");
+    } else if (showHotspot && !seenModel.hotspot && !stageVisible) {
+      setNotice("exam");
+    } else if (!showHotspot && notice === "exam") {
+      setNotice(null);
+    }
+  }
+
+  useEffect(() => {
+    if (!stageEl || typeof IntersectionObserver === "undefined") return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible =
+          entry.isIntersecting && entry.intersectionRatio >= STAGE_VISIBLE_RATIO;
+        setStageVisible(visible);
+        if (visible) setNotice(null);
+      },
+      { threshold: [0, STAGE_VISIBLE_RATIO, 1] }
+    );
+    observer.observe(stageEl);
+    return () => observer.disconnect();
+  }, [stageEl]);
+
+  const showStage = () => {
+    const reduceMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    stageEl?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
+    stageEl
+      ?.querySelector(".case-viewer-toolbar button")
+      ?.focus({ preventScroll: true });
+    setNotice(null);
+  };
 
   const toggleTest = (testId) => {
     setSelectedTestIds((current) =>
@@ -74,7 +153,24 @@ export default function CaseSession({
     setAnswers((current) => ({ ...current, [questionId]: optionId }));
   };
 
+  const startExam = () => setExamStage("form");
+
+  const answerPalpation = (findingId, option) => {
+    setPalpationAnswers((current) => ({ ...current, [findingId]: option }));
+  };
+
+  const registerPalpation = () => {
+    setExamStage("done");
+    setExamBlocked(false);
+  };
+
   const goNext = () => {
+    // The requested exam is part of the step: it cannot be skipped silently.
+    if (currentStep === "tests" && examPending) {
+      setExamBlocked(true);
+      return;
+    }
+
     if (currentStep === "tests" && providedIds.length === 0) {
       const missing = tests
         .filter((test) => test.indicated && !requestedIds.includes(test.id))
@@ -102,6 +198,7 @@ export default function CaseSession({
         questions: answers,
         requestedTests: requestedIds,
         hintsUsed,
+        ...(palpationResult && { palpation: palpationAnswers }),
         patientExplanation: explanation.trim(),
       },
     });
@@ -122,40 +219,72 @@ export default function CaseSession({
             <h2>
               {patient.name}, {patient.age} años
             </h2>
-            <p>{clinicalCase.topic}</p>
+            <p>
+              {clinicalCase.topic} · {clinicalCase.difficulty}
+            </p>
           </div>
         </div>
 
-        <ol className="cases-stepper">
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            const reachable = result ? true : index <= stepIndex;
-            const state =
-              index === stepIndex ? "current" : index < stepIndex ? "done" : "";
+        <nav className="cases-progress" aria-label="Pasos del caso">
+          <p className="cases-progress-label">
+            Paso {stepIndex + 1} de {steps.length} · {steps[stepIndex].label}
+          </p>
 
-            return (
-              <li key={step.id}>
-                <button
-                  className={`cases-step ${state}`}
-                  disabled={!reachable}
-                  onClick={() => setStepIndex(index)}
-                  title={step.label}
-                >
-                  <Icon size={15} />
-                  <span>{step.label}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ol>
+          <ol className="cases-stepper">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              const reachable = result ? true : index <= stepIndex;
+              const state =
+                index === stepIndex ? "current" : index < stepIndex ? "done" : "";
+
+              return (
+                <li key={step.id}>
+                  <button
+                    className={`cases-step ${state}`}
+                    disabled={!reachable}
+                    onClick={() => setStepIndex(index)}
+                    title={step.label}
+                    aria-current={index === stepIndex ? "step" : undefined}
+                  >
+                    <Icon size={14} />
+                    <span>{step.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
       </header>
 
       <div className="cases-workspace">
         <Suspense fallback={<div className="case-viewer-loading">Cargando modelo 3D…</div>}>
-          <CaseModelViewer model={model} revealed={modelRevealed} />
+          <CaseModelViewer
+            model={model}
+            revealed={modelRevealed}
+            examActive={examPending}
+            showHotspot={showHotspot}
+            onPalpate={startExam}
+            stageRef={setStageEl}
+          />
         </Suspense>
 
         <div className="cases-content">
+          {/* Zero-height sticky anchor: the pill floats without shifting the panel. */}
+          <div className="case-viewer-notice-anchor">
+            <div role="status" aria-live="polite">
+              {notice && !stageVisible && (
+                <button
+                  type="button"
+                  className="case-viewer-notice"
+                  onClick={showStage}
+                >
+                  <ArrowUp size={15} aria-hidden="true" />
+                  {NOTICE_TEXT[notice]}
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="cases-content-body">
             {currentStep === "patient" && <PatientStep clinicalCase={clinicalCase} />}
 
@@ -167,7 +296,21 @@ export default function CaseSession({
                 locked={Boolean(result)}
                 selection={selectedTestIds}
                 onToggle={toggleTest}
-              />
+                hiddenResultIds={examPending ? ["dre"] : []}
+              >
+                {examRequested && (
+                  <PhysicalExam
+                    palpation={palpation}
+                    stage={examStage}
+                    answers={palpationAnswers}
+                    graded={palpationResult}
+                    blocked={examBlocked}
+                    onStart={startExam}
+                    onAnswer={answerPalpation}
+                    onSubmit={registerPalpation}
+                  />
+                )}
+              </TestsStep>
             )}
 
             {currentStep === "questions" && (
@@ -190,6 +333,7 @@ export default function CaseSession({
                 answers={answers}
                 explanation={explanation.trim()}
                 result={result}
+                palpationResult={palpationResult}
                 saveStatus={saveStatus}
               />
             )}
