@@ -23,25 +23,44 @@ El contenido, por su parte, no se programa. Las unidades de Aprendizaje, los ór
 
 ```text
 src/
-├── App.jsx                     Rutas y protección de rutas privadas
-├── Dashboard.jsx               Menú lateral y cambio entre módulos
+├── main.jsx                    Punto de entrada: monta la aplicación con sus proveedores
+├── App.jsx                     Rutas: bienvenida, ingreso y registro sin sesión; panel con sesión
+├── Dashboard.jsx               Panel principal: menú lateral agrupado y cambio entre módulos
+├── index.css                   Estilos base de la aplicación
+├── styles/
+│   └── theme.css               Colores, tipografías y medidas de los temas claro y oscuro
 ├── context/
-│   └── AuthContext.jsx         Estado de la sesión (usuario y perfil)
-├── pages/                      Login y registro
+│   ├── AuthContext.jsx         Estado de la sesión (usuario y perfil)
+│   ├── ThemeContext.jsx        Tema elegido (claro, oscuro o del sistema)
+│   ├── themeContext.js         Opciones del tema y clave donde se guarda
+│   └── useTheme.js             Acceso al tema desde cualquier componente
+├── pages/                      Ingreso y registro
+│   └── AuthShell.jsx           Diseño común de las dos pantallas
 ├── services/                   Integración con Supabase
 │   ├── supabase.js             Cliente de Supabase
 │   ├── authService.js          Sesión, registro, inicio de sesión y perfil
 │   └── clinicalCasesService.js Guardar y consultar intentos de casos
 └── components/
+    ├── brand/                  Logo de PROSTA-SIM
+    ├── landing/                Página de bienvenida
+    ├── profile/                Menú de perfil (tema y cierre de sesión)
+    ├── theme/                  Selector de tema
     ├── learning/               Aprendizaje
     │   └── data/               Contenido de las seis unidades
     ├── anatomy/                Anatomía 3D
     │   ├── AnatomyScene.jsx    Escena 3D reutilizable (modelo, luces y cámara)
     │   └── anatomyData.js      Órganos y posiciones de cámara
     └── clinicalCases/          Casos clínicos
-        ├── ui/                 Pantallas y visor 3D del caso
-        ├── logic/              Calificación y generación de pacientes
+        ├── ui/                 Pantallas, pasos del caso y visor 3D
+        ├── logic/              Calificación, generación de pacientes y examen físico
         └── data/               Plantillas de casos y zonas de la próstata
+
+public/
+├── favicon.svg                 Ícono de la pestaña
+└── models/prostata.glb         Modelo 3D de la pelvis masculina
+
+supabase/
+└── clinical_case_attempts.sql  Tabla de intentos de casos clínicos y sus reglas de seguridad
 ```
 
 ## Decisiones
