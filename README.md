@@ -1,6 +1,6 @@
 # PROSTA-SIM
 
-Plataforma web de aprendizaje y simulación educativa sobre la próstata y sus patologías. Está dirigida a estudiantes del área de la salud y reúne contenidos teóricos, exploración anatómica, casos clínicos ficticios y evaluación de conocimientos.
+Plataforma web de aprendizaje y simulación educativa sobre la próstata y sus patologías. Reúne contenidos teóricos, exploración anatómica, casos clínicos ficticios y evaluación de conocimientos.
 
 > Proyecto con fines exclusivamente educativos. Los casos y contenidos no sustituyen la orientación de un profesional de la salud.
 
