@@ -1,11 +1,14 @@
 import {
   AlertTriangle,
   CheckCircle2,
+  Hand,
   Lightbulb,
   MessageSquareText,
   Stethoscope,
   XCircle,
 } from "lucide-react";
+
+import { PalpationReview } from "./PhysicalExam";
 
 const saveMessages = {
   saving: "Guardando tu intento...",
@@ -25,6 +28,7 @@ export default function FeedbackStep({
   answers,
   explanation,
   result,
+  palpationResult,
   saveStatus,
 }) {
   const { questions } = clinicalCase;
@@ -75,6 +79,19 @@ export default function FeedbackStep({
           ))}
         </ul>
       </div>
+
+      {palpationResult && (
+        <div className="cases-block cases-exam">
+          <h3>
+            <Hand size={16} /> Examen físico
+          </h3>
+          <p className="cases-exam-instruction">
+            Describiste bien {palpationResult.correct} de {palpationResult.total}{" "}
+            hallazgos del tacto rectal. No cuenta en el resultado del caso.
+          </p>
+          <PalpationReview graded={palpationResult} />
+        </div>
+      )}
 
       <div className="cases-review">
         {questions.map((question, index) => {

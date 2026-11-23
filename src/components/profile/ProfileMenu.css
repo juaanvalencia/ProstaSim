@@ -1,0 +1,153 @@
+.profile-menu {
+  position: relative;
+}
+
+.profile-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 10px 4px 18px;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  text-align: right;
+  cursor: pointer;
+}
+
+.profile-menu-trigger:hover,
+.profile-menu-trigger[aria-expanded="true"] {
+  background: var(--alt);
+  border-color: var(--line);
+}
+
+.profile-menu-trigger:focus-visible,
+.profile-menu-logout:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+.profile-menu-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-menu-info strong {
+  font-size: 13px;
+}
+
+.profile-menu-info span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.profile-menu-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--acc);
+  background: var(--soft);
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profile-menu-chevron {
+  color: var(--muted);
+  transition: transform 0.18s ease;
+}
+
+.profile-menu-trigger[aria-expanded="true"] .profile-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.profile-menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 300px;
+  padding: 16px;
+  color: var(--ink);
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.profile-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.profile-menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-menu-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.profile-menu-section .theme-switch {
+  align-self: stretch;
+  justify-content: space-between;
+}
+
+.profile-menu-section .theme-switch-option {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Inside the menu there is room for the labels at every width. */
+.profile-menu-section .theme-switch-label {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+}
+
+.profile-menu-logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.profile-menu-logout:hover {
+  background: var(--alt);
+}
+
+@media (max-width: 700px) {
+  .profile-menu-trigger .profile-menu-info {
+    display: none;
+  }
+
+  .profile-menu-panel {
+    width: min(300px, calc(100vw - 32px));
+  }
+}

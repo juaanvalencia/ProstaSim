@@ -1,6 +1,6 @@
 # Qué es PROSTA-SIM
 
-PROSTA-SIM es una aplicación web para estudiar la próstata y sus enfermedades más frecuentes. Está pensada para estudiantes del área de la salud: pueden leer la teoría, recorrer un modelo 3D de la pelvis masculina y practicar con casos clínicos ficticios en los que toman decisiones y reciben retroalimentación.
+PROSTA-SIM es una aplicación web para estudiar la próstata y sus enfermedades más frecuentes. En ella se puede leer la teoría, recorrer un modelo 3D de la pelvis masculina y practicar con casos clínicos ficticios en los que se toman decisiones y se recibe retroalimentación.
 
 El proyecto nació en la asignatura Gestión de Proyectos TI, del programa de Ingeniería de Sistemas, y lo desarrollamos en equipo.
 
