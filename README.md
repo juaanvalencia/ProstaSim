@@ -46,7 +46,7 @@ cp .env.example .env
 npm run dev
 ```
 
-La aplicación queda disponible en `http://localhost:5173`.
+La aplicación queda disponible en la ruta que nos da al ejecutar el servidor.
 
 ### Variables de entorno
 
