@@ -66,6 +66,9 @@ El 22 de noviembre de 2026 los seis casos pasaron los dos caminos. Esa vez encon
 * Al marcar pruebas, quedaban seleccionadas pero no solicitadas, y si el estudiante presionaba el botón principal se perdía la selección. Ahora hay un solo botón, «Solicitar pruebas», que cambia según lo que haya hecho.
 * Después de que la aplicación agregaba las pruebas faltantes, el botón seguía diciendo «Continuar sin pruebas». Ahora dice «Siguiente».
 
-### Pendiente
+### Guardado de intentos en Supabase
 
-Todavía falta probar el guardado real de intentos, porque la tabla `clinical_case_attempts` aún no está creada en Supabase. Mientras tanto, la aplicación funciona igual: avisa que no pudo guardar el intento y muestra la retroalimentación completa.
+El 22 de noviembre de 2026 se creó la tabla `clinical_case_attempts` con el script `supabase/clinical_case_attempts.sql` y se probó el guardado real de punta a punta:
+
+* Sin iniciar sesión, Supabase rechaza guardar un intento por las reglas de seguridad (RLS), así que nadie puede escribir intentos ajenos.
+* Con una cuenta, se resolvió un caso clínico completo: la aplicación mostró «Intento guardado en tu historial» y, al recargar la página, la tarjeta del caso apareció como «Completado» con su mejor puntaje y el número de intentos leídos desde la base de datos.
